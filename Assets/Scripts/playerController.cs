@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(TouchingDirections))]
-public class playerController : MonoBehaviour
+/// <summary>
+/// Controls the player partially by interpreting user inputs
+/// </summary>
+[RequireComponent(typeof(Rigidbody2D), typeof(TouchingDirections), typeof(Animator))]
+public class PlayerController : MonoBehaviour
 {
+    #region Class params
+    Rigidbody2D rb;     // player body
+    TouchingDirections touchingDirections;  // what the player's body is touching
+    Animator animator;
+
+    public float jumpImpulse = 10f;
+
+    #region movement params
     public float moveSpeed;
     Vector2 moveInput;
-    Rigidbody2D rb;
-    TouchingDirections TouchingDirections;
-    Animator animator;
-    public float jumpInpulse = 10f;
-    private bool canDash = true;
-    private float dashingPower = 24f;
-    private float dashingTime = 0.2f;
-    private float dashingCD = 1f;
-
     [SerializeField]
     private bool _isMoving = false;
     public bool IsMoving
@@ -31,6 +33,26 @@ public class playerController : MonoBehaviour
             animator.SetBool(AnimationStrings.isMoving, value);
         }
     }
+    private bool _isFacingRight = true;
+    public bool IsFacingRight
+    {
+        get { return _isFacingRight; }
+        private set
+        {
+            if (_isFacingRight != value)
+            {
+                transform.localScale *= new Vector2(-1, 1); // flip along x-axis
+            }
+            _isFacingRight = value;
+        }
+    }
+    #endregion
+
+    #region dash params
+    private bool canDash = true;
+    private float dashingPower = 24f;
+    private float dashingTime = 0.2f;
+    private float dashingCD = 0.5f;
     [SerializeField]
     private bool _isDashing = false;
     public bool IsDashing
@@ -45,27 +67,61 @@ public class playerController : MonoBehaviour
             animator.SetBool(AnimationStrings.isDashing, value);
         }
     }
+    #endregion
 
-
-    private bool _isFacingRight = true;
-    public bool IsFacingRight
+    #region swinging params
+    private float swingPower = 18f;
+    private float swingTime = 0.5f;
+    [SerializeField]
+    private bool _canSwing;
+    public bool CanSwing
     {
-        get { return _isFacingRight; }
-        private set
+        get
         {
-            if (_isFacingRight != value)
-            {
-                transform.localScale *= new Vector2(-1, 1);
-            }
-            _isFacingRight = value;
+            return _canSwing;
+        }
+        set
+        {
+            _canSwing = value;
         }
     }
+    [SerializeField]
+    private bool _isSwinging;
+    public bool IsSwinging
+    {
+        get
+        {
+            return _isSwinging;
+        }
+        set
+        {
+            _isSwinging = value;
+            animator.SetBool(AnimationStrings.isSwinging, value);
+        }
+    }
+    [SerializeField]
+    private bool _isSwingLunging;
+    public bool IsSwingLunging
+    {
+        get
+        {
+            return _isSwingLunging;
+        }
+        set
+        {
+            _isSwingLunging = value;
+            animator.SetBool(AnimationStrings.isSwingLunging, value);
+        }
+    }
+    #endregion
+    #endregion
 
+    // Called when the controller is created
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        TouchingDirections = GetComponent<TouchingDirections>();
+        touchingDirections = GetComponent<TouchingDirections>();
     }
 
     // Start is called before the first frame update
@@ -80,17 +136,23 @@ public class playerController : MonoBehaviour
         if (IsDashing) return;
     }
 
+    // called on the Fixed Timestep in Unity making it ideal for physics calculations
     private void FixedUpdate()
     {
         if (IsDashing) return;
 
-        if (!TouchingDirections.IsOnWall)
+        if (!touchingDirections.IsOnWall && !IsSwinging && !IsSwingLunging)
         {
             rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
         }
         animator.SetFloat(AnimationStrings.yVelocity, rb.velocity.y);
     }
 
+    #region Player inputs and actions
+    /// <summary>
+    /// Called when a player issues a movement command
+    /// </summary>
+    /// <param name="context">Move Command</param>
     public void OnMove(InputAction.CallbackContext context)
     {
         // x,y movement input
@@ -100,25 +162,10 @@ public class playerController : MonoBehaviour
 
         SetScaleDirection(moveInput);
     }
-
-    public void OnDash(InputAction.CallbackContext context)
-    {
-        if (context.started && canDash)
-        {
-            Debug.Log("Dash");
-            StartCoroutine(Dash());
-        }
-    }
-
-    public void OnJump(InputAction.CallbackContext context)
-    {
-        if (context.started && TouchingDirections.IsGrounded)
-        {
-            animator.SetTrigger(AnimationStrings.jump);
-            rb.velocity = new Vector2(rb.velocity.x, jumpInpulse);
-        }
-    }
-
+    /// <summary>
+    /// Sets what direction the player scale should face
+    /// </summary>
+    /// <param name="moveInput"></param>
     private void SetScaleDirection(Vector2 moveInput)
     {
         if (moveInput.x > 0 && !IsFacingRight)
@@ -133,9 +180,64 @@ public class playerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called when a player issues a swing command
+    /// </summary>
+    /// <param name="context">Swing Command</param>
+    public void OnSwing(InputAction.CallbackContext context)
+    {
+        if (context.started && CanSwing && !touchingDirections.IsGrounded && !IsDashing && !IsSwinging)
+        {
+            Debug.Log("Swinging");
+            animator.SetTrigger(AnimationStrings.swing);
+            rb.velocity = Vector2.zero;
+            rb.gravityScale = 0;    // must be called before Swing() resets it
+            IsSwinging = true;
+        }
+        if (context.canceled && IsSwinging && !touchingDirections.IsGrounded)
+        {
+            Debug.Log("Swing lunged");
+            StartCoroutine(Swing());
+        }
+    }
+    /// <summary>
+    /// Performs a swing lunging the player in their movement direction
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator Swing()
+    {
+        IsSwinging = false;
+        // Use the moveInput to determine the lunge direction
+        if (moveInput != Vector2.zero)
+        {
+            // Apply velocity in the direction of movement input
+            rb.velocity = moveInput * swingPower;
+            IsSwingLunging = true;
+        }
+        rb.gravityScale = 1;
+        yield return new WaitForSeconds(swingTime);
+        IsSwingLunging = false;
+        canDash = true;
+    }
+
+    /// <summary>
+    /// Called when a player issues a dash command
+    /// </summary>
+    /// <param name="context">Dash command</param>
+    public void OnDash(InputAction.CallbackContext context)
+    {
+        if (context.started && canDash && !IsSwingLunging && !IsSwinging)
+        {
+            Debug.Log("Dash");
+            StartCoroutine(Dash());
+        }
+    }
+    /// <summary>
+    /// Dashes the player forward in the direction they're facing
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator Dash()
     {
-        // reference original player state
         canDash = false;
         IsDashing = true;
         float originalGravity = rb.gravityScale;
@@ -150,4 +252,20 @@ public class playerController : MonoBehaviour
         yield return new WaitForSeconds(dashingCD);
         canDash = true;
     }
+
+    /// <summary>
+    /// Called when a player issues a jump command
+    /// 
+    /// Performs a jump if the player is touching the ground
+    /// </summary>
+    /// <param name="context">Jump command</param>
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.started && touchingDirections.IsGrounded)
+        {
+            animator.SetTrigger(AnimationStrings.jump);
+            rb.velocity = new Vector2(rb.velocity.x, jumpImpulse);
+        }
+    }
+    #endregion
 }

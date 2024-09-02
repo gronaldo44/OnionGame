@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Collider for checking what the player's rb is touching
+/// </summary>
+[RequireComponent(typeof(Collider2D), typeof(Animator))]
 public class TouchingDirections : MonoBehaviour
 {
     public ContactFilter2D castFilter;
-
     Animator animator;
     Collider2D col;
 
@@ -56,12 +59,14 @@ public class TouchingDirections : MonoBehaviour
         }
     }
 
+    // Called when the collider is created
     private void Awake()
     {
         col = GetComponent<Collider2D>();
         animator = GetComponent<Animator>();
     }
 
+    // called on the Fixed Timestep in Unity making it ideal for physics calculations
     private void FixedUpdate()
     {
         IsGrounded = col.Cast(Vector2.down, castFilter, groundHits, groundDist) > 0;
