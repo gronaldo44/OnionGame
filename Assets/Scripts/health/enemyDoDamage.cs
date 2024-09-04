@@ -8,13 +8,13 @@ public class doDamage : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (
+        
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        playerHealth
+        
     }
 
     // Update is called once per frame
