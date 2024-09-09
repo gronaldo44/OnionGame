@@ -3,23 +3,41 @@ using UnityEngine;
 public class doDamage : MonoBehaviour
 {
 
-    public int damage;
-    public health playerHealth;
+    bool attacking = false;
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        
-    }
+    private GameObject attackArea = default;
+    private float timeToAttack = 0.25f;
+    private float timer = 0f;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        attackArea = transform.GetChild(0).gameObject;
+        attackArea.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
+        Attack();
 
+        if (attacking)
+        {
+            timer += Time.deltaTime;
+
+            if (timer >= timeToAttack)
+            {
+                timer = 0;
+                attacking = false;
+                attackArea.SetActive(attacking);
+            }
+
+        }
+    }
+
+    void Attack()
+    {
+        attacking = true;
+        attackArea.SetActive(attacking);
     }
 }
