@@ -26,14 +26,10 @@ public class health : MonoBehaviour
         else
         {
 
-            if (!isDead)
-            {
-                // anim.SetTriger("death);
-                isDead = true;
-                Destroy(gameObject);
-                //GetComponent<PlayerMovement>().enabled = false;
-
-            }
+            // anim.SetTriger("death);
+            isDead = true;
+            Destroy(gameObject);
+            //GetComponent<PlayerMovement>().enabled = false;
 
         }
     }

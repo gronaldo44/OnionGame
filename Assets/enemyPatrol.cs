@@ -7,6 +7,7 @@ public class enemyPatrol : MonoBehaviour
     private Rigidbody2D rb;
     private Transform currentPoint;
     public float speed;
+    private SpriteRenderer spriteRenderer;
     //private Animation;
 
     // Start is called before the first frame update
@@ -15,6 +16,7 @@ public class enemyPatrol : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         //Animation animation = GetComponent<Animation>();
         currentPoint = pointB.transform;
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
     }
 
@@ -25,9 +27,11 @@ public class enemyPatrol : MonoBehaviour
         if (currentPoint == pointB.transform)
         {
             rb.velocity = new Vector2(speed, 0);
+            spriteRenderer.flipX = true;
         }
         else
         {
+            spriteRenderer.flipX = false;
             rb.velocity = new Vector2(-speed, 0);
         }
 
