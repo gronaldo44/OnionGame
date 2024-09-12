@@ -7,13 +7,17 @@ using UnityEngine;
 /// </summary>
 public class SwingCollider : MonoBehaviour
 {
-    PlayerController playerController;
-    [SerializeField] GameObject player;
+    [SerializeField] private bool isRopeSwing;
+    [SerializeField] private GameObject player;
+    private PlayerController playerController;
+    [SerializeField] private GameObject hairLasso;
+    private HairLassoController hairLassoController;
 
     // Called when the collider is created
     private void Awake()
     {
         playerController = player.GetComponent<PlayerController>();
+        hairLassoController = hairLasso.GetComponent<HairLassoController>();
     }
 
     /// <summary>
@@ -22,10 +26,15 @@ public class SwingCollider : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.GetComponent<PlayerController>() != null)
+        if (collision.TryGetComponent<PlayerController>(out var player) && !isRopeSwing)
         {
             //Debug.Log("Can Swing");
             playerController.CanSwing = true;
+        }
+        else if (collision.TryGetComponent<HairLassoController>(out var lasso) && isRopeSwing)
+        {
+            Debug.Log("Can RopeSwing");
+            hairLassoController.SetSwingableObject(gameObject);
         }
     }
 
@@ -36,10 +45,19 @@ public class SwingCollider : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.GetComponent<PlayerController>() != null)
+        if (collision.TryGetComponent<PlayerController>(out var player) && !isRopeSwing)
         {
             //Debug.Log("Can't Swing");
             playerController.CanSwing = false;
+        }
+        else if (collision.TryGetComponent<HairLassoController>(out var lasso) && isRopeSwing)
+        {
+            // Ensure the player is no longer swinging before clearing the swingable object
+            if (!playerController.IsRopeSwinging)
+            {
+                Debug.Log("Can't RopeSwing");
+                hairLassoController.ClearSwingableObject();
+            }
         }
     }
 }

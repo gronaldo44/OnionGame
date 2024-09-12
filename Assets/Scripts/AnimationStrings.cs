@@ -20,5 +20,7 @@ internal class AnimationStrings
     internal static string swing = "swing";
     internal static string isSwinging = "isSwinging";
     internal static string isSwingLunging = "isSwingLunging";
+    internal static string ropeSwing = "ropeSwing";
+    internal static string isRopeSwinging = "isRopeSwinging";
 }
 

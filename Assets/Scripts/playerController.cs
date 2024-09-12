@@ -10,7 +10,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     #region Class params
-    Rigidbody2D rb;     // player body
+    public Rigidbody2D rb;     // player body
     TouchingDirections touchingDirections;  // what the player's body is touching
     Animator animator;
 
@@ -113,6 +113,35 @@ public class PlayerController : MonoBehaviour
             animator.SetBool(AnimationStrings.isSwingLunging, value);
         }
     }
+
+    [SerializeField] private HairLassoController hairLassoController;
+    [SerializeField]
+    private bool _canRopeSwing;
+    public bool CanRopeSwing
+    {
+        get
+        {
+            return _canRopeSwing;
+        }
+        set
+        {
+            _canRopeSwing = value;
+        }
+    }
+    [SerializeField]
+    private bool _isRopeSwinging;
+    public bool IsRopeSwinging
+    {
+        get
+        {
+            return _isRopeSwinging;
+        }
+        set
+        {
+            _isRopeSwinging = value;
+            animator.SetBool(AnimationStrings.isRopeSwinging, value);
+        }
+    }
     #endregion
     #endregion
 
@@ -140,8 +169,18 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         if (IsDashing) return;
+        if (IsSwinging) return;
+        if (IsSwingLunging) return;
+        if (IsRopeSwinging)
+        {
+            // Apply force based on player input to swing harder
+            float swingForce = 10f; // Adjust this value to control how much force is applied
+            Vector2 forceDirection = new Vector2(moveInput.x, 0).normalized;
+            rb.AddForce(forceDirection * swingForce);
+            return;
+        }
 
-        if (!touchingDirections.IsOnWall && !IsSwinging && !IsSwingLunging)
+        if (!touchingDirections.IsOnWall)
         {
             rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
         }
@@ -149,6 +188,21 @@ public class PlayerController : MonoBehaviour
     }
 
     #region Player inputs and actions
+    public void OnLasso(InputAction.CallbackContext context)
+    {
+        if (context.started && !IsSwinging && !IsDashing)
+        {
+            Debug.Log("Attempting to swing");
+            hairLassoController.TryAttachLasso(); // Notify HairLassoController to attach the lasso
+        }
+        if (context.canceled && IsRopeSwinging)
+        {
+            Debug.Log("Releasing lasso");
+            hairLassoController.ReleaseLasso(); // Notify HairLassoController to release the lasso
+            StartCoroutine(Swing());
+        }
+    }
+
     /// <summary>
     /// Called when a player issues a movement command
     /// </summary>
