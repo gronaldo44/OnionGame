@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8607518894632435176}
   - component: {fileID: 8066256735957446494}
+  - component: {fileID: 9116273477692540184}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -46,4 +47,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 1740235488506837435, guid: 2b5faf6b84204d84e8d68aef79c47a9a, type: 3}
   spawnPoint: {fileID: 7512767460096313606, guid: 2b5faf6b84204d84e8d68aef79c47a9a, type: 3}
+  swingablePrefab: {fileID: 3256781849038534160, guid: 05bb724cd12968c4cb1ebdafac6348b2, type: 3}
+  swingableSpawnPoints: []
   cameraManager: {fileID: 0}
+  uiManager: {fileID: 9116273477692540184}
+--- !u!114 &9116273477692540184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5870404485472370811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d33e5e62b01fe664b832c89e38ff9470, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthBar: {fileID: 4820629950907486129, guid: b5773fd8d547fd4499da5d38f20da547, type: 3}

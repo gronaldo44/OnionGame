@@ -8,15 +8,22 @@ public class UIManager : MonoBehaviour
     // UI Elements
     public Slider healthBar;
 
+    private PlayerHealth playerHealth;
+
     void Start()
     {
+        ConnectHealthBarToPlayer();
+    }
+
+    private void ConnectHealthBarToPlayer()
+    {
         // Find the PlayerHealth script and subscribe to the OnHealthChanged event
-        PlayerHealth playerHealth = FindAnyObjectByType<PlayerHealth>();
+        playerHealth = FindAnyObjectByType<PlayerHealth>();
         if (playerHealth != null)
         {
             playerHealth.OnHealthChanged.AddListener(UpdateHealthBar);
-            playerHealth.OnPlayerDied.AddListener(ShowGameOverScreen);
-        } 
+            playerHealth.OnPlayerDied.AddListener(HandlePlayerDeath);
+        }
         else
         {
             Debug.LogWarning("PlayerHealth component not found.");
@@ -26,7 +33,7 @@ public class UIManager : MonoBehaviour
     private void OnDestroy()
     {
         // Unsubscribe to avoid memory leaks
-        PlayerHealth playerHealth = FindAnyObjectByType<PlayerHealth>();
+        playerHealth = FindAnyObjectByType<PlayerHealth>();
         if (playerHealth != null)
         {
             playerHealth.OnHealthChanged.RemoveListener(UpdateHealthBar);
@@ -43,9 +50,31 @@ public class UIManager : MonoBehaviour
         Debug.Log("Health bar updated: " + newHealth);
     }
 
-    private void ShowGameOverScreen()
+    private void HandlePlayerDeath()
     {
-        // TODO
+        // TODO figure what should happen when the player dies
+
     }
 
+    public void UpdatePlayerReference(GameObject newPlayer)
+    {
+        // Unsubscribe from the previous player if necessary
+        if (playerHealth != null)
+        {
+            playerHealth.OnHealthChanged.RemoveListener(UpdateHealthBar);
+            playerHealth.OnPlayerDied.RemoveListener(HandlePlayerDeath);
+        }
+
+        // Assign the new player's health and reconnect the slider
+        playerHealth = newPlayer.GetComponent<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            playerHealth.OnHealthChanged.AddListener(UpdateHealthBar);
+            playerHealth.OnPlayerDied.AddListener(HandlePlayerDeath);
+        }
+        else
+        {
+            Debug.LogWarning("New player does not have a PlayerHealth component.");
+        }
+    }
 }

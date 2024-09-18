@@ -13,9 +13,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject swingablePrefab;
     [SerializeField] private Transform[] swingableSpawnPoints;
     // camera setup
-    public CameraManager cameraManager;
+    [SerializeField] private CameraManager cameraManager;
+    // UI setup
+    [SerializeField] private UIManager uiManager;
 
     private GameObject currentPlayer;
+    private List<GameObject> swingableInstances = new List<GameObject>();
 
     private void Awake()
     {
@@ -39,12 +42,8 @@ public class GameManager : MonoBehaviour
 
     private void SpawnPlayer()
     {
-        if (currentPlayer != null)
-        {
-            Destroy(currentPlayer);
-        }
-
         currentPlayer = Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity);
+        UpdateRopeSwingPlayerRefs();
         PlayerHealth playerHealth = currentPlayer.GetComponent<PlayerHealth>();
 
         if (playerHealth != null)
@@ -56,6 +55,12 @@ public class GameManager : MonoBehaviour
         {
             cameraManager.UpdateCameraFollow(currentPlayer.transform);
         }
+
+        // Update the UIManager with the new player instance
+        if (uiManager != null)
+        {
+            uiManager.UpdatePlayerReference(currentPlayer);
+        }
     }
 
     private void SpawnRopeSwings()
@@ -63,11 +68,23 @@ public class GameManager : MonoBehaviour
         foreach (Transform spawnPoint in swingableSpawnPoints)
         {
             GameObject swingable = Instantiate(swingablePrefab, spawnPoint.position, Quaternion.identity);
-            // Set the reference to the player or any other setup needed
+            swingableInstances.Add(swingable); // Keep track of swingables for future reference
             SwingCollider swingCollider = swingable.GetComponent<SwingCollider>();
             if (swingCollider != null)
             {
-                swingCollider.SetPlayerReference(currentPlayer); // Add a method to set the player reference in SwingCollider
+                swingCollider.SetPlayerReference(currentPlayer);
+            }
+        }
+    }
+
+    private void UpdateRopeSwingPlayerRefs()
+    {
+        foreach (GameObject swingable in swingableInstances)
+        {
+            SwingCollider swingCollider = swingable.GetComponent<SwingCollider>();
+            if (swingCollider != null)
+            {
+                swingCollider.SetPlayerReference(currentPlayer);
             }
         }
     }
@@ -75,6 +92,11 @@ public class GameManager : MonoBehaviour
     // Just respawns the player at the beginning right now
     private void HandlePlayerDeath()
     {
+        if (currentPlayer != null)
+        {
+            Destroy(currentPlayer);
+        }
+
         SpawnPlayer();
     }
 

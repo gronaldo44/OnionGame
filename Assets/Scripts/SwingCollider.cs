@@ -9,7 +9,6 @@ public class SwingCollider : MonoBehaviour
 {
     [SerializeField] private bool isRopeSwing;
     [SerializeField] private GameObject player;
-    [SerializeField] private GameObject hairLasso;
 
     private HairLassoController hairLassoController;
     private PlayerController playerController;
@@ -18,7 +17,7 @@ public class SwingCollider : MonoBehaviour
     private void Awake()
     {
         playerController = player.GetComponent<PlayerController>();
-        hairLassoController = hairLasso.GetComponent<HairLassoController>();
+        hairLassoController = playerController.hairLassoController;
     }
 
     /// <summary>
