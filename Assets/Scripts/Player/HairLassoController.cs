@@ -6,18 +6,20 @@ public class HairLassoController : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D playerRb;
     [SerializeField] private PlayerController playerController;
+    [SerializeField] public DistanceJoint2D distanceJoint;
 
-    private DistanceJoint2D distanceJoint;
-    private LineRenderer lineRenderer;
+    public LineRenderer lineRenderer;
     private GameObject currentSwingable;
     private bool isLassoActive = false;
 
     private void Awake()
     {
-        distanceJoint = playerRb.gameObject.AddComponent<DistanceJoint2D>();
         distanceJoint.enabled = false; // Start disabled
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.enabled = false;
+
+        Debug.Log("Distance joint is: " + distanceJoint);
+        Debug.Log("Line Renderer is: " + lineRenderer);
     }
 
     private void Update()
@@ -41,6 +43,9 @@ public class HairLassoController : MonoBehaviour
 
     public void SetSwingableObject(GameObject swingable)
     {
+        Debug.Log("Distance joint is: " + distanceJoint);
+        Debug.Log("Line Renderer is: " + lineRenderer);
+
         currentSwingable = swingable;
     }
 

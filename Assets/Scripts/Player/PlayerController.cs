@@ -192,7 +192,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.started && !IsSwinging && !IsDashing)
         {
-            Debug.Log("Attempting to swing");
+            Debug.Log("Attempting to lasso");
             hairLassoController.TryAttachLasso(); // Notify HairLassoController to attach the lasso
         }
         if (context.canceled && IsRopeSwinging)
