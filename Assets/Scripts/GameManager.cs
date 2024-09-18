@@ -6,6 +6,9 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; } // Singleton instance
 
+    // Saving/Loading
+    private SaveLoadManager saveLoadManager;
+
     // player setup
     [SerializeField] private GameObject playerPrefab; 
     [SerializeField] private Transform spawnPoint;
@@ -32,12 +35,54 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject); // Destroy duplicate instances
         }
+        saveLoadManager = Instance.saveLoadManager;
     }
 
     void Start()
     {
         SpawnPlayer();
         SpawnRopeSwings();
+    }
+
+    public void SaveGame()
+    {
+        PlayerHealth playerHealth = currentPlayer.GetComponent<PlayerHealth>();
+        Vector3 playerPosition = currentPlayer.transform.position;
+
+        GameData gameData = new GameData
+        {
+            playerHealth = playerHealth.CurrentHealth,  // Save current health
+            playerPosX = playerPosition.x,
+            playerPosY = playerPosition.y,
+            playerPosZ = playerPosition.z
+        };
+
+        saveLoadManager.SaveGame(gameData);
+    }
+
+    public void LoadGame()
+    {
+        GameData gameData = saveLoadManager.LoadGame();
+
+        currentPlayer = Instantiate(playerPrefab, new Vector3(gameData.playerPosX, gameData.playerPosY, gameData.playerPosZ), Quaternion.identity);
+
+        PlayerHealth playerHealth = currentPlayer.GetComponent<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            playerHealth.CurrentHealth = gameData.playerHealth;          // Set current health
+        }
+
+        UpdateRopeSwingPlayerRefs();
+
+        if (cameraManager != null)
+        {
+            cameraManager.UpdateCameraFollow(currentPlayer.transform);
+        }
+
+        if (uiManager != null)
+        {
+            uiManager.UpdatePlayerReference(currentPlayer);
+        }
     }
 
     private void SpawnPlayer()

@@ -6,7 +6,12 @@ using UnityEngine.Events;
 public class PlayerHealth : MonoBehaviour
 {
     public float startingHealth = 50f;
-    [SerializeField] private float currentHealth;
+    [SerializeField] private float _currHealth;
+    public float CurrentHealth
+    {
+        get { return _currHealth; }
+        set { _currHealth = value; }
+    }
     private bool isDead;
 
     // Event Controllers for UIManager
@@ -15,24 +20,24 @@ public class PlayerHealth : MonoBehaviour
 
     void Start()
     {
-        currentHealth = startingHealth;
+        _currHealth = startingHealth;
         isDead = false;
 
         // Initialize the health bar UI
-        OnHealthChanged?.Invoke(currentHealth);
+        OnHealthChanged?.Invoke(_currHealth);
     }
 
     public void TakeDamage(float damage)
     {
         if (isDead) return; // No damage if the player is already dead
 
-        currentHealth = Mathf.Clamp(currentHealth - damage, 0, startingHealth);
+        _currHealth = Mathf.Clamp(_currHealth - damage, 0, startingHealth);
 
         // Notify listeners of health change
-        OnHealthChanged?.Invoke(currentHealth);
+        OnHealthChanged?.Invoke(_currHealth);
         Debug.Log("Player took damage: " + damage);
 
-        if (currentHealth <= 0 && !isDead)
+        if (_currHealth <= 0 && !isDead)
         {
             Die();
         }
@@ -40,10 +45,10 @@ public class PlayerHealth : MonoBehaviour
 
     public void Heal(float healAmount)
     {
-        currentHealth = Mathf.Clamp(currentHealth + healAmount, 0, startingHealth);
+        _currHealth = Mathf.Clamp(_currHealth + healAmount, 0, startingHealth);
 
         // Notify listeners of health change
-        OnHealthChanged?.Invoke(currentHealth);
+        OnHealthChanged?.Invoke(_currHealth);
         Debug.Log("Player healed hp: " + healAmount);
     }
 
