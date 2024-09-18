@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    [SerializeField] private HairLassoController hairLassoController;
+    public HairLassoController hairLassoController;
     [SerializeField]
     private bool _canRopeSwing;
     public bool CanRopeSwing

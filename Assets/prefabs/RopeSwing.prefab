@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4492426280349132610}
   - component: {fileID: 6756187104686308766}
   m_Layer: 0
-  m_Name: Swingable
+  m_Name: RopeSwing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -139,8 +139,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isRopeSwing: 1
-  player: {fileID: 0}
-  hairLasso: {fileID: 0}
+  player: {fileID: 1740235488506837435, guid: 2b5faf6b84204d84e8d68aef79c47a9a, type: 3}
+  hairLasso: {fileID: 2206823500860226070, guid: 8661ef1fb30f66c41bfe38d335a0ba4c, type: 3}
 --- !u!50 &6756187104686308766
 Rigidbody2D:
   serializedVersion: 4
