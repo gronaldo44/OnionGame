@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &496438034561668315
+--- !u!1 &3256781849038534160
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,40 +8,40 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6781418508022079583}
-  - component: {fileID: 3577032573928924}
-  - component: {fileID: 8559954505845403483}
-  - component: {fileID: 6568547581582659621}
-  - component: {fileID: 7211143806746856312}
+  - component: {fileID: 4628470242162732008}
+  - component: {fileID: 2545058621720083993}
+  - component: {fileID: 1550475070249275823}
+  - component: {fileID: 4492426280349132610}
+  - component: {fileID: 6756187104686308766}
   m_Layer: 0
-  m_Name: Swing
+  m_Name: Swingable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6781418508022079583
+--- !u!4 &4628470242162732008
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 496438034561668315}
+  m_GameObject: {fileID: 3256781849038534160}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.10508063, w: 0.99446374}
-  m_LocalPosition: {x: -0.33, y: -0.75, z: -0.10453509}
-  m_LocalScale: {x: 0.28253344, y: 0.28253344, z: 0.28253344}
+  m_LocalRotation: {x: -0, y: -0, z: -0.0038782337, w: 0.9999925}
+  m_LocalPosition: {x: -1.24, y: 0.86, z: -0.10453509}
+  m_LocalScale: {x: 1.2757694, y: 1.2757694, z: 1.2757694}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -12.064}
---- !u!212 &3577032573928924
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -0.444}
+--- !u!212 &2545058621720083993
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 496438034561668315}
+  m_GameObject: {fileID: 3256781849038534160}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -52,6 +52,8 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -76,7 +78,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 293f95a0fb0e9fc469742fb0f9a3aa23, type: 3}
+  m_Sprite: {fileID: 2060545857434680503, guid: 907571fe907bb6e46b1ced07b9cd3732, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -87,14 +89,15 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!70 &8559954505845403483
+--- !u!70 &1550475070249275823
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 496438034561668315}
+  m_GameObject: {fileID: 3256781849038534160}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -118,33 +121,34 @@ CapsuleCollider2D:
     m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -0.100679845, y: 0.012623299}
-  m_Size: {x: 5.986082, y: 6.9631634}
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: -0.053912148, y: -0.49459502}
+  m_Size: {x: 5.93134, y: 6.833488}
   m_Direction: 0
---- !u!114 &6568547581582659621
+--- !u!114 &4492426280349132610
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 496438034561668315}
+  m_GameObject: {fileID: 3256781849038534160}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5035eb034d7e59545a506191e5ff4828, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isRopeSwing: 0
+  isRopeSwing: 1
   player: {fileID: 0}
   hairLasso: {fileID: 0}
---- !u!50 &7211143806746856312
+--- !u!50 &6756187104686308766
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 496438034561668315}
+  m_GameObject: {fileID: 3256781849038534160}
   m_BodyType: 2
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
@@ -152,7 +156,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 0
+  m_GravityScale: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
