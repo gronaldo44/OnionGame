@@ -7,8 +7,11 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; } // Singleton instance
 
     // player setup
-    public GameObject playerPrefab; 
-    public Transform spawnPoint;  
+    [SerializeField] private GameObject playerPrefab; 
+    [SerializeField] private Transform spawnPoint;
+    // Swingables setup
+    [SerializeField] private GameObject swingablePrefab;
+    [SerializeField] private Transform[] swingableSpawnPoints;
     // camera setup
     public CameraManager cameraManager;
 
@@ -31,9 +34,10 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         SpawnPlayer();
+        SpawnRopeSwings();
     }
 
-    public void SpawnPlayer()
+    private void SpawnPlayer()
     {
         if (currentPlayer != null)
         {
@@ -51,6 +55,20 @@ public class GameManager : MonoBehaviour
         if (cameraManager != null)
         {
             cameraManager.UpdateCameraFollow(currentPlayer.transform);
+        }
+    }
+
+    private void SpawnRopeSwings()
+    {
+        foreach (Transform spawnPoint in swingableSpawnPoints)
+        {
+            GameObject swingable = Instantiate(swingablePrefab, spawnPoint.position, Quaternion.identity);
+            // Set the reference to the player or any other setup needed
+            SwingCollider swingCollider = swingable.GetComponent<SwingCollider>();
+            if (swingCollider != null)
+            {
+                swingCollider.SetPlayerReference(currentPlayer); // Add a method to set the player reference in SwingCollider
+            }
         }
     }
 

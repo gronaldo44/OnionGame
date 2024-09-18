@@ -19,9 +19,6 @@ public class SwingCollider : MonoBehaviour
     {
         playerController = player.GetComponent<PlayerController>();
         hairLassoController = hairLasso.GetComponent<HairLassoController>();
-
-        Debug.Log("HERE Distance joint is: " + hairLassoController.distanceJoint);
-        Debug.Log("HERE Line Renderer is: " + hairLassoController.lineRenderer);
     }
 
     /// <summary>
@@ -62,6 +59,15 @@ public class SwingCollider : MonoBehaviour
                 Debug.Log("Can't LassoSwing");
                 hairLassoController.ClearSwingableObject();
             }
+        }
+    }
+
+    public void SetPlayerReference(GameObject player)
+    {
+        if (player != null)
+        {
+            playerController = player.GetComponent<PlayerController>();
+            hairLassoController = playerController.hairLassoController;
         }
     }
 }
