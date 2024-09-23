@@ -131,7 +131,7 @@ Transform:
   m_GameObject: {fileID: 1740235488506837435}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.34, y: -1.8091, z: 0}
+  m_LocalPosition: {x: -6.238, y: -1.8091, z: 0}
   m_LocalScale: {x: 0.40357617, y: 0.40286046, z: 1.524527}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -216,9 +216,9 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_Interpolate: 1
+  m_SleepingMode: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!114 &8920189008569541561
 MonoBehaviour:
@@ -233,9 +233,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
-  jumpImpulse: 10
-  moveSpeed: 5.07
+  jumpImpulse: 3.2
+  jumpCutMultiplier: 0.5
+  normalGravityScale: 1
+  fallMultiplier: 2.8
+  lowJumpMultiplier: 2.5
+  additionalJumpForce: 0.2
+  moveSpeed: 7.5
+  acceleration: 20
+  deceleration: 20
   _isMoving: 0
+  dashingPower: 25
+  dashingTime: 0.2
+  dashingCD: 0.5
   _isDashing: 0
   _canSwing: 0
   _isSwinging: 0
@@ -243,6 +253,8 @@ MonoBehaviour:
   hairLassoController: {fileID: 7572530635035534383}
   _canRopeSwing: 0
   _isRopeSwinging: 0
+  coyoteTime: 0.2
+  jumpBufferTime: 0.1
 --- !u!114 &8135385121676183901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -435,8 +447,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.021140648, y: -0.0063102446}
-  m_Size: {x: 1.8978417, y: 5.6807413}
+  m_Offset: {x: 0.0059212353, y: 0.06982728}
+  m_Size: {x: 3.6840246, y: 5.5626082}
   m_Direction: 0
 --- !u!114 &4979888522616503525
 MonoBehaviour:
@@ -542,7 +554,7 @@ DistanceJoint2D:
   m_Anchor: {x: 0, y: 0}
   m_ConnectedAnchor: {x: 0, y: 0}
   m_AutoConfigureDistance: 1
-  m_Distance: 6.5930605
+  m_Distance: 6.4950356
   m_MaxDistanceOnly: 0
 --- !u!1 &2595506844552204585
 GameObject:
@@ -593,6 +605,7 @@ MonoBehaviour:
   playerRb: {fileID: 4383603873363616090}
   playerController: {fileID: 8920189008569541561}
   distanceJoint: {fileID: 4948851746632857723}
+  lineRenderer: {fileID: 0}
 --- !u!58 &6272002081625382892
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -652,7 +665,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -684,7 +697,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1
+        value: 0.13885117
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -696,8 +709,8 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 0.01860446, g: 0.2528302, b: 0.071251675, a: 1}
+      key1: {r: 0.07636161, g: 0.5396226, b: 0.21353458, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -720,8 +733,8 @@ LineRenderer:
       atime5: 0
       atime6: 0
       atime7: 0
-      m_Mode: 0
-      m_ColorSpace: -1
+      m_Mode: 2
+      m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
