@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,23 +9,34 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     #region Class params
-    public Rigidbody2D rb;     // player body
-    TouchingDirections touchingDirections;  // what the player's body is touching
+    public Rigidbody2D rb;     // Player body
+    TouchingDirections touchingDirections;  // What the player's body is touching
     Animator animator;
 
-    public float jumpImpulse = 10f;
+    public float jumpImpulse = 16f; // Increased for more snappy ascent
+    public float jumpCutMultiplier = 0.5f;
 
-    #region movement params
-    public float moveSpeed;
+    #region Jump Enhancements
+    [Header("Jump Enhancements")]
+    public float normalGravityScale = 2f;     // Increased gravity scale for snappy ascent
+    public float fallMultiplier = 3f;         // Gravity multiplier when falling
+    public float lowJumpMultiplier = 2.5f;    // Gravity multiplier for short jumps
+    public float additionalJumpForce = 1f;    // Optional upward force during ascent
+
+    private bool isJumpPressed = false;        // Tracks if the jump button is held
+    #endregion
+
+    #region Movement params
+    public float moveSpeed = 10f;
+    public float acceleration = 50f; // Increased for snappier movement
+    public float deceleration = 50f; // Increased for snappier movement
+    private float currentSpeed = 0f;
     Vector2 moveInput;
     [SerializeField]
     private bool _isMoving = false;
     public bool IsMoving
     {
-        get
-        {
-            return _isMoving;
-        }
+        get => _isMoving;
         private set
         {
             _isMoving = value;
@@ -36,31 +46,28 @@ public class PlayerController : MonoBehaviour
     private bool _isFacingRight = true;
     public bool IsFacingRight
     {
-        get { return _isFacingRight; }
+        get => _isFacingRight;
         private set
         {
             if (_isFacingRight != value)
             {
-                transform.localScale *= new Vector2(-1, 1); // flip along x-axis
+                transform.localScale *= new Vector2(-1, 1); // Flip along x-axis
             }
             _isFacingRight = value;
         }
     }
     #endregion
 
-    #region dash params
+    #region Dash params
     private bool canDash = true;
-    private float dashingPower = 24f;
-    private float dashingTime = 0.2f;
-    private float dashingCD = 0.5f;
+    public float dashingPower = 24f;
+    public float dashingTime = 0.2f;
+    public float dashingCD = 0.5f;
     [SerializeField]
     private bool _isDashing = false;
     public bool IsDashing
     {
-        get
-        {
-            return _isDashing;
-        }
+        get => _isDashing;
         set
         {
             _isDashing = value;
@@ -69,30 +76,21 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
-    #region swinging params
+    #region Swinging params
     private float swingPower = 18f;
     private float swingTime = 0.5f;
     [SerializeField]
-    private bool _canSwing;
+    private bool _canSwing = true;
     public bool CanSwing
     {
-        get
-        {
-            return _canSwing;
-        }
-        set
-        {
-            _canSwing = value;
-        }
+        get => _canSwing;
+        set => _canSwing = value;
     }
     [SerializeField]
     private bool _isSwinging;
     public bool IsSwinging
     {
-        get
-        {
-            return _isSwinging;
-        }
+        get => _isSwinging;
         set
         {
             _isSwinging = value;
@@ -103,10 +101,7 @@ public class PlayerController : MonoBehaviour
     private bool _isSwingLunging;
     public bool IsSwingLunging
     {
-        get
-        {
-            return _isSwingLunging;
-        }
+        get => _isSwingLunging;
         set
         {
             _isSwingLunging = value;
@@ -119,23 +114,14 @@ public class PlayerController : MonoBehaviour
     private bool _canRopeSwing;
     public bool CanRopeSwing
     {
-        get
-        {
-            return _canRopeSwing;
-        }
-        set
-        {
-            _canRopeSwing = value;
-        }
+        get => _canRopeSwing;
+        set => _canRopeSwing = value;
     }
     [SerializeField]
     private bool _isRopeSwinging;
     public bool IsRopeSwinging
     {
-        get
-        {
-            return _isRopeSwinging;
-        }
+        get => _isRopeSwinging;
         set
         {
             _isRopeSwinging = value;
@@ -143,12 +129,23 @@ public class PlayerController : MonoBehaviour
         }
     }
     #endregion
+
+    #region Coyote Time and Jump Buffer
+    public float coyoteTime = 0.2f;
+    private float coyoteTimeCounter;
+
+    public float jumpBufferTime = 0.1f;
+    private float jumpBufferCounter;
+    #endregion
     #endregion
 
     // Called when the controller is created
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        rb.gravityScale = normalGravityScale; // Use normal gravity scale
+        rb.drag = 0f; // Ensure no unintended drag affects movement
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         animator = GetComponent<Animator>();
         touchingDirections = GetComponent<TouchingDirections>();
     }
@@ -162,29 +159,129 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Handle coyote time
+        if (touchingDirections.IsGrounded)
+        {
+            coyoteTimeCounter = coyoteTime;
+        }
+        else
+        {
+            coyoteTimeCounter -= Time.deltaTime;
+        }
+
+        // Handle jump buffering
+        if (isJumpPressed)
+        {
+            jumpBufferCounter = jumpBufferTime;
+        }
+        else
+        {
+            jumpBufferCounter -= Time.deltaTime;
+        }
+
         if (IsDashing) return;
+
+        // Additional non-physics updates can go here
     }
 
-    // called on the Fixed Timestep in Unity making it ideal for physics calculations
+    // Called on the Fixed Timestep in Unity making it ideal for physics calculations
     private void FixedUpdate()
     {
-        if (IsDashing) return;
-        if (IsSwinging) return;
-        if (IsSwingLunging) return;
+        if (IsDashing || IsSwinging || IsSwingLunging)
+            return;
+
         if (IsRopeSwinging)
         {
             // Apply force based on player input to swing harder
-            float swingForce = 10f; // Adjust this value to control how much force is applied
+            float swingForce = 10f; // Adjust as needed
             Vector2 forceDirection = new Vector2(moveInput.x, 0).normalized;
             rb.AddForce(forceDirection * swingForce);
             return;
         }
 
-        if (!touchingDirections.IsOnWall)
+        // Handle buffered jumps
+        if (jumpBufferCounter > 0f && coyoteTimeCounter > 0f)
         {
-            rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
+            PerformJump();
+            jumpBufferCounter = 0f;
         }
+
+        HandleMovement();
+
+        // Adjust gravity for better jump feel
+        AdjustGravity();
+
+        // Apply additional upward force if ascending and jump button is held
+        if (rb.velocity.y > 0 && isJumpPressed)
+        {
+            rb.AddForce(Vector2.up * additionalJumpForce, ForceMode2D.Force); // Continuous upward force
+        }
+
         animator.SetFloat(AnimationStrings.yVelocity, rb.velocity.y);
+    }
+
+    private void HandleMovement()
+    {
+        // Determine target speed based on input
+        float targetSpeed = moveInput.x * moveSpeed;
+
+        // Debug input and target speed
+        Debug.Log($"moveInput.x: {moveInput.x}, targetSpeed: {targetSpeed}, currentSpeed: {currentSpeed}");
+
+        // Calculate acceleration or deceleration
+        if (Mathf.Abs(targetSpeed) > Mathf.Epsilon)
+        {
+            // Accelerate towards target speed
+            currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, acceleration * Time.fixedDeltaTime);
+        }
+        else
+        {
+            // Decelerate to zero
+            currentSpeed = Mathf.MoveTowards(currentSpeed, 0, deceleration * Time.fixedDeltaTime);
+        }
+
+        // Apply the calculated speed (only horizontal velocity)
+        rb.velocity = new Vector2(currentSpeed, rb.velocity.y);
+
+        // Debug applied velocity
+        Debug.Log($"Applied velocity: {rb.velocity}");
+    }
+
+    private void AdjustGravity()
+    {
+        if (IsDashing || IsSwinging || IsSwingLunging || IsRopeSwinging)
+        {
+            // Use normal gravity or adjusted gravity based on state
+            rb.gravityScale = normalGravityScale;
+            return;
+        }
+
+        if (rb.velocity.y < 0)
+        {
+            // Player is falling
+            rb.gravityScale = normalGravityScale * fallMultiplier;
+            Debug.Log("Falling: gravityScale set to " + rb.gravityScale);
+        }
+        else if (rb.velocity.y > 0 && !isJumpPressed)
+        {
+            // Player is ascending but has released the jump button
+            rb.gravityScale = normalGravityScale * lowJumpMultiplier;
+            Debug.Log("Ascending (jump button released): gravityScale set to " + rb.gravityScale);
+        }
+        else
+        {
+            // Player is ascending and holding the jump button
+            rb.gravityScale = normalGravityScale;
+            Debug.Log("Ascending (jump button held): gravityScale set to " + rb.gravityScale);
+        }
+    }
+
+    private void PerformJump()
+    {
+        animator.SetTrigger(AnimationStrings.jump);
+        rb.AddForce(new Vector2(0, jumpImpulse), ForceMode2D.Impulse); // Apply upward impulse
+        coyoteTimeCounter = 0f;
+        isJumpPressed = true;
     }
 
     #region Player inputs and actions
@@ -209,13 +306,12 @@ public class PlayerController : MonoBehaviour
     /// <param name="context">Move Command</param>
     public void OnMove(InputAction.CallbackContext context)
     {
-        // x,y movement input
+        // Directly set moveInput without smoothing
         moveInput = context.ReadValue<Vector2>();
-
-        IsMoving = moveInput != Vector2.zero;
-
+        IsMoving = moveInput.magnitude > 0.1f;
         SetScaleDirection(moveInput);
     }
+
     /// <summary>
     /// Sets what direction the player scale should face
     /// </summary>
@@ -245,7 +341,7 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Swinging");
             animator.SetTrigger(AnimationStrings.swing);
             rb.velocity = Vector2.zero;
-            rb.gravityScale = 0;    // must be called before Swing() resets it
+            rb.gravityScale = 0f;    // Must be called before Swing() resets it
             IsSwinging = true;
         }
         if (context.canceled && IsSwinging && !touchingDirections.IsGrounded)
@@ -254,6 +350,7 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(Swing());
         }
     }
+
     /// <summary>
     /// Performs a swing lunging the player in their movement direction
     /// </summary>
@@ -261,17 +358,20 @@ public class PlayerController : MonoBehaviour
     private IEnumerator Swing()
     {
         IsSwinging = false;
-        // Use the moveInput to determine the lunge direction
+
         if (moveInput != Vector2.zero)
         {
             // Apply velocity in the direction of movement input
-            rb.velocity = moveInput * swingPower;
+            rb.velocity = moveInput.normalized * swingPower;
             IsSwingLunging = true;
         }
-        rb.gravityScale = 1;
+
+        rb.gravityScale = normalGravityScale;
         yield return new WaitForSeconds(swingTime);
         IsSwingLunging = false;
         canDash = true;
+
+        // Optionally, reset any swing-specific states or effects here
     }
 
     /// <summary>
@@ -286,6 +386,7 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(Dash());
         }
     }
+
     /// <summary>
     /// Dashes the player forward in the direction they're facing
     /// </summary>
@@ -296,13 +397,19 @@ public class PlayerController : MonoBehaviour
         IsDashing = true;
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f;
-        rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
-        // perform dash
+
+        // Determine dash direction
+        Vector2 dashDirection = IsFacingRight ? Vector2.right : Vector2.left;
+        rb.velocity = dashDirection * dashingPower;
+
+        // Optionally, add a dash effect or sound here
+        // e.g., Instantiate(dashEffect, transform.position, Quaternion.identity);
+
         yield return new WaitForSeconds(dashingTime);
-        // resume original player state
+
         rb.gravityScale = originalGravity;
         IsDashing = false;
-        // wait for dash cooldown
+
         yield return new WaitForSeconds(dashingCD);
         canDash = true;
     }
@@ -310,15 +417,26 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// Called when a player issues a jump command
     /// 
-    /// Performs a jump if the player is touching the ground
+    /// Performs a jump if the player is touching the ground or within coyote time
     /// </summary>
     /// <param name="context">Jump command</param>
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.started && touchingDirections.IsGrounded)
+        if (context.started && coyoteTimeCounter > 0)
         {
             animator.SetTrigger(AnimationStrings.jump);
-            rb.velocity = new Vector2(rb.velocity.x, jumpImpulse);
+            rb.AddForce(new Vector2(0, jumpImpulse), ForceMode2D.Impulse); // Apply upward impulse
+            coyoteTimeCounter = 0;
+            isJumpPressed = true; // Jump button pressed
+        }
+
+        if (context.canceled)
+        {
+            isJumpPressed = false; // Jump button released
+            if (rb.velocity.y > 0)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * jumpCutMultiplier);
+            }
         }
     }
     #endregion
