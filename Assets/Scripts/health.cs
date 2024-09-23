@@ -4,35 +4,57 @@ public class health : MonoBehaviour
 {
     [SerializeField] private float startingHealth;
 
-    private float currentHealth;
-
-    private bool isDead;
+    private float _currentHealth;
+    public float CurrentHealth
+    {
+        get { return _currentHealth; }
+        set
+        {
+            if (value <= 0)
+            {
+                _currentHealth = 0;
+                IsDead = true;
+            } else
+            {
+                // TODO HurtAnimation()
+                _currentHealth = value;
+            }
+        }
+    }
+    private bool _isDead = false;
+    public bool IsDead
+    {
+        get { return _isDead; }
+        set
+        {
+            if (value && !_isDead)
+            {
+                _isDead = true;
+                HandleDeath();
+            }
+            else
+            {
+                _isDead = value;
+            }
+        }
+    }
 
     private void Start()
     {
-        currentHealth = startingHealth;
-        isDead = false;
+        CurrentHealth = startingHealth;
     }
 
     public void DamageTaken(float damage)
     {
-        //Debug.Log("Took Damage: " + damage);
-        currentHealth = Mathf.Clamp(currentHealth - damage, 0, startingHealth);
-        currentHealth -= damage;
-        //Debug.Log("Health: " + currentHealth + "/" + startingHealth);
+        Debug.Log(gameObject.name + " Took Damage: " + damage);
+        CurrentHealth -= damage;
+        Debug.Log("Health: " + CurrentHealth + "/" + startingHealth);
+    }
 
-        if (currentHealth > 0)
-        {
-            // player hurt animation
-        }
-        else
-        {
-
-            // anim.SetTriger("death);
-            isDead = true;
-            Destroy(gameObject);
-            //GetComponent<PlayerMovement>().enabled = false;
-
-        }
+    // TODO
+    private void HandleDeath()
+    {
+        Debug.Log(gameObject.name + " is dead");
+        gameObject.SetActive(false);
     }
 }

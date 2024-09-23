@@ -18,8 +18,8 @@ public class HairLassoController : MonoBehaviour
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.enabled = false;
 
-        Debug.Log("Distance joint is: " + distanceJoint);
-        Debug.Log("Line Renderer is: " + lineRenderer);
+        Debug.Log("Distance joint is: " + distanceJoint.name);
+        Debug.Log("Line Renderer is: " + lineRenderer.name);
     }
 
     private void Update()

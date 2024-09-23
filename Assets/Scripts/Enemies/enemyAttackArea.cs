@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public class enemyAttackArea : MonoBehaviour
+public class EnemyAttackArea : MonoBehaviour
 {
-    [SerializeField] private int dmg;
+    [SerializeField] public int dmg;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.GetComponent<playerDoDamage>() != null)
+        if (collision.GetComponent<PlayerDoDamage>() != null)
         {
             PlayerHealth h = collision.GetComponent<PlayerHealth>();
             h.TakeDamage(dmg);
