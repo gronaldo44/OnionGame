@@ -41,14 +41,14 @@ public class health : MonoBehaviour
 
     private void Start()
     {
-        _currentHealth = startingHealth;
+        CurrentHealth = startingHealth;
     }
 
     public void DamageTaken(float damage)
     {
-        //Debug.Log("Took Damage: " + damage);
-        _currentHealth -= damage;
-        //Debug.Log("Health: " + currentHealth + "/" + startingHealth);
+        Debug.Log(gameObject.name + " Took Damage: " + damage);
+        CurrentHealth -= damage;
+        Debug.Log("Health: " + CurrentHealth + "/" + startingHealth);
     }
 
     // TODO
