@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public float startingHealth = 50f;
+    public float maxHealth = 50f;
     [SerializeField] private float _currHealth;
     public float CurrentHealth
     {
@@ -20,18 +20,15 @@ public class PlayerHealth : MonoBehaviour
 
     void Start()
     {
-        _currHealth = startingHealth;
+        _currHealth = maxHealth;
         isDead = false;
-
-        // Initialize the health bar UI
-        OnHealthChanged?.Invoke(_currHealth);
     }
 
     public void TakeDamage(float damage)
     {
         if (isDead) return; // No damage if the player is already dead
 
-        _currHealth = Mathf.Clamp(_currHealth - damage, 0, startingHealth);
+        _currHealth = Mathf.Clamp(_currHealth - damage, 0, maxHealth);
 
         // Notify listeners of health change
         OnHealthChanged?.Invoke(_currHealth);
@@ -45,7 +42,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void Heal(float healAmount)
     {
-        _currHealth = Mathf.Clamp(_currHealth + healAmount, 0, startingHealth);
+        _currHealth = Mathf.Clamp(_currHealth + healAmount, 0, maxHealth);
 
         // Notify listeners of health change
         OnHealthChanged?.Invoke(_currHealth);

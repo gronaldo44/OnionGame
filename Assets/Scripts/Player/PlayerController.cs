@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D rb;     // player body
     TouchingDirections touchingDirections;  // what the player's body is touching
     Animator animator;
+    [SerializeField] public Vector3 spawnLocation = Vector3.zero;
 
     public float jumpImpulse = 10f;
 

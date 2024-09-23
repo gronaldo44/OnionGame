@@ -1,30 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using UnityEngine;
 
 public class SaveLoadManager
 {
-    public void SaveGame(GameData data)
+    private string saveFilePath;
+
+    public SaveLoadManager()
     {
-        PlayerPrefs.SetFloat(PlayerPrefStrings.PlayerHealth, data.playerHealth);
-        PlayerPrefs.SetFloat(PlayerPrefStrings.PlayerPosX, data.playerPosX);
-        PlayerPrefs.SetFloat(PlayerPrefStrings.PlayerPosY, data.playerPosY);
-        PlayerPrefs.SetFloat(PlayerPrefStrings.PlayerPosZ, data.playerPosZ);
-        PlayerPrefs.Save();
+        // Set the path for the save file
+        saveFilePath = Path.Combine(Application.persistentDataPath, "savefile.json");
     }
 
-    public GameData LoadGame()
+    public void SaveGame(string sceneName, GameData data)
     {
-        GameData data = new GameData
-        {
-            playerHealth = PlayerPrefs.GetFloat(PlayerPrefStrings.PlayerHealth, GameData.startingHealth),
-            playerPosX = PlayerPrefs.GetFloat(PlayerPrefStrings.PlayerPosX, 0f),
-            playerPosY = PlayerPrefs.GetFloat(PlayerPrefStrings.PlayerPosY, 0f),
-            playerPosZ = PlayerPrefs.GetFloat(PlayerPrefStrings.PlayerPosZ, 0f)
-        };
-        return data;
+        string filePath = Path.Combine(Application.persistentDataPath, $"{sceneName}Save.json");
+        string json = JsonUtility.ToJson(data);
+        File.WriteAllText(filePath, json);
     }
+
+    public GameData LoadGame(string sceneName)
+    {
+        string filePath = Path.Combine(Application.persistentDataPath, $"{sceneName}Save.json");
+
+        if (File.Exists(filePath))
+        {
+            string json = File.ReadAllText(filePath);
+            return JsonUtility.FromJson<GameData>(json);
+        }
+
+        return new GameData(); // Return default data if file doesn't exist
+    }
+
+    public bool HasSavedGame(string sceneName)
+    {
+        // Check if there is a saved file for the current scene
+        return PlayerPrefs.HasKey(sceneName);
+    }
+
 }

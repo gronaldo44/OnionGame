@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,11 +12,11 @@ public class GameManager : MonoBehaviour
     private SaveLoadManager saveLoadManager;
 
     // player setup
-    [SerializeField] private GameObject playerPrefab; 
-    [SerializeField] private Transform spawnPoint;
+    [SerializeField] private GameObject playerPrefab;
     // Swingables setup
     [SerializeField] private GameObject swingablePrefab;
-    [SerializeField] private Transform[] swingableSpawnPoints;
+    // Enemy setup
+    [SerializeField] private GameObject mousePrefab;
     // camera setup
     [SerializeField] private CameraManager cameraManager;
     // UI setup
@@ -22,6 +24,7 @@ public class GameManager : MonoBehaviour
 
     private GameObject currentPlayer;
     private List<GameObject> swingableInstances = new List<GameObject>();
+    private List<GameObject> enemyInstances = new List<GameObject>();
 
     private void Awake()
     {
@@ -35,67 +38,198 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject); // Destroy duplicate instances
         }
-        saveLoadManager = Instance.saveLoadManager;
+        saveLoadManager = new SaveLoadManager();
     }
 
     void Start()
     {
-        SpawnPlayer();
-        SpawnRopeSwings();
+        string currentSceneName = SceneManager.GetActiveScene().name;
+
+        // Check if there is saved game data for the current scene
+        if (saveLoadManager.HasSavedGame(currentSceneName))
+        {
+            // Load the game data for the current scene
+            LoadGame(currentSceneName);
+        }
+        else
+        {
+            // Spawn player and set up the environment with default conditions
+            SpawnPlayer(new PlayerData());
+            SpawnSwingables();
+            SpawnEnemies();
+        }
     }
 
-    public void SaveGame()
+    public void ChangeScene(string sceneName)
     {
+        SaveGame(sceneName); // Save the current scene's data
+        StartCoroutine(LoadSceneAndGame(sceneName)); // Start loading new scene
+    }
+
+    private IEnumerator LoadSceneAndGame(string sceneName)
+    {
+        // Load the new scene asynchronously
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+
+        // Wait until the new scene is fully loaded
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+
+        // Once the scene is fully loaded, load the game data
+        LoadGame(sceneName);
+    }
+
+    #region Saving
+    public void SaveGame(string sceneName)
+    {
+        if (currentPlayer == null)
+        {
+            // We are in main menu
+            saveLoadManager.SaveGame(sceneName, new GameData());
+            return;
+        }
+
+        // Capture player health and position
         PlayerHealth playerHealth = currentPlayer.GetComponent<PlayerHealth>();
         Vector3 playerPosition = currentPlayer.transform.position;
+        Vector3 playerSpawn = currentPlayer.GetComponent<PlayerController>().spawnLocation;
 
-        GameData gameData = new GameData
+        // Create PlayerData from player stats
+        PlayerData playerData = new PlayerData(playerHealth.maxHealth, playerHealth.CurrentHealth, playerPosition, playerSpawn);
+
+        // Capture swingables positions
+        List<SwingableData> swingableDataList = new List<SwingableData>();
+        foreach (GameObject swingable in swingableInstances)
         {
-            playerHealth = playerHealth.CurrentHealth,  // Save current health
-            playerPosX = playerPosition.x,
-            playerPosY = playerPosition.y,
-            playerPosZ = playerPosition.z
-        };
+            SwingController swingController = swingable.GetComponent<SwingController>();
+            swingableDataList.Add(new SwingableData(swingable.transform.position, swingController.IsRopeSwing));
+        }
 
-        saveLoadManager.SaveGame(gameData);
+        // Assuming you have enemy instances stored and managed similarly to swingables
+        List<EnemyData> enemyDataList = new List<EnemyData>();
+        foreach (GameObject enemy in enemyInstances)
+        {
+            EnemyPatrol patrol = enemy.GetComponent<EnemyPatrol>();
+            enemyDataList.Add(new EnemyData(enemy, patrol.pointA.position, patrol.pointB.position, true));
+        }
+
+        // Create the GameData object with player, swingables, and enemies
+        GameData gameData = new GameData(playerData, swingableDataList, enemyDataList);
+
+        // Save game data using SaveLoadManager
+        saveLoadManager.SaveGame(sceneName, gameData);
     }
 
-    public void LoadGame()
+    public void LoadGame(string sceneName)
     {
-        GameData gameData = saveLoadManager.LoadGame();
+        Debug.Log("Loading Game: " + sceneName);
+        GameData gameData = saveLoadManager.LoadGame(sceneName);
 
-        currentPlayer = Instantiate(playerPrefab, new Vector3(gameData.playerPosX, gameData.playerPosY, gameData.playerPosZ), Quaternion.identity);
+        // Spawn player with the loaded game data
+        SpawnPlayer(gameData.player);
+        // Load environment objects
+        LoadSwingables(gameData.swingables);
+        // Load enemies
+        LoadEnemies(gameData.enemies);
+    }
 
-        PlayerHealth playerHealth = currentPlayer.GetComponent<PlayerHealth>();
-        if (playerHealth != null)
+    private void LoadSwingables(List<SwingableData> swingables)
+    {
+        swingableInstances.Clear();
+        foreach (SwingableData swing in swingables)
         {
-            playerHealth.CurrentHealth = gameData.playerHealth;          // Set current health
+            GameObject swingable = Instantiate(swingablePrefab, swing.Location, Quaternion.identity);
+            swingableInstances.Add(swingable);
+            SwingController swingController = swingable.GetComponent<SwingController>();
+            if (swingController != null)
+            {
+                swingController.IsRopeSwing = swing.IsRopeSwing; // Set correctly based on loaded data
+                swingController.SetPlayerReference(currentPlayer);
+            }
+        }
+
+        SpawnSwingables();
+    }
+
+    private void LoadEnemies(List<EnemyData> enemies)
+    {
+        enemyInstances.Clear();
+        foreach (EnemyData enemyData in enemies)
+        {
+            GameObject enemy = Instantiate(enemyData.enemyPrefab, enemyData.enemyPatrolPositionA, Quaternion.identity);
+            if (!enemyData.isActive)
+            {
+                health hp = enemy.GetComponent<health>();
+                hp.IsDead = true;
+            }
+            EnemyPatrol patrol = enemy.GetComponent<EnemyPatrol>();
+            if (patrol != null)
+            {
+                patrol.pointA.position = enemyData.enemyPatrolPositionA;
+                patrol.pointB.position = enemyData.enemyPatrolPositionB;
+            }
+            enemyInstances.Add(enemy);
+        }
+
+        SpawnEnemies();
+    }
+
+    #endregion
+
+    #region Spawning
+    private void SpawnPlayer(PlayerData playerData)
+    {
+        // Check if player data has valid health and location
+        bool hasPlayerData = playerData.playerHealth > 0;  // just checks if player is alive
+
+        if (hasPlayerData)
+        {
+            Debug.Log("Spawning player from save");
+            // Spawn the player at the saved location
+            currentPlayer = Instantiate(playerPrefab, playerData.currLocation, Quaternion.identity);
+
+            PlayerHealth playerHealth = currentPlayer.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.CurrentHealth = playerData.playerHealth; // Restore player health
+                playerHealth.OnPlayerDied.AddListener(HandlePlayerDeath);
+            }
+        }
+        else
+        {
+            // Default spawn point for the first load
+            GameObject defaultSpawnPoint = GameObject.Find(SceneStrings.playerSpawn);
+            if (defaultSpawnPoint != null)
+            {
+                Debug.Log("Spawning player in default spawn");
+                currentPlayer = Instantiate(playerPrefab, defaultSpawnPoint.transform.position, Quaternion.identity);
+
+                PlayerHealth playerHealth = currentPlayer.GetComponent<PlayerHealth>();
+                if (playerHealth != null)
+                {
+                    playerHealth.CurrentHealth = playerHealth.maxHealth; // Set to max health on first load
+                    playerHealth.OnPlayerDied.AddListener(HandlePlayerDeath);
+                }
+            } else
+            {
+                Debug.Log("No Player found in scene: " + SceneManager.GetActiveScene().name);
+                return;
+            }
         }
 
         UpdateRopeSwingPlayerRefs();
 
-        if (cameraManager != null)
+        // Ensure CameraManager is set at runtime
+        if (cameraManager == null)
         {
-            cameraManager.UpdateCameraFollow(currentPlayer.transform);
+            cameraManager = GameObject.Find(SceneStrings.mainCamera).GetComponent<CameraManager>();
+            if (cameraManager == null)
+            {
+                Debug.LogError("CameraManager not found in the scene!");
+            }
         }
-
-        if (uiManager != null)
-        {
-            uiManager.UpdatePlayerReference(currentPlayer);
-        }
-    }
-
-    private void SpawnPlayer()
-    {
-        currentPlayer = Instantiate(playerPrefab, spawnPoint.position, Quaternion.identity);
-        UpdateRopeSwingPlayerRefs();
-        PlayerHealth playerHealth = currentPlayer.GetComponent<PlayerHealth>();
-
-        if (playerHealth != null)
-        {
-            playerHealth.OnPlayerDied.AddListener(HandlePlayerDeath);
-        }
-
         if (cameraManager != null)
         {
             cameraManager.UpdateCameraFollow(currentPlayer.transform);
@@ -108,25 +242,80 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void SpawnRopeSwings()
+
+    private void SpawnSwingables()
     {
-        foreach (Transform spawnPoint in swingableSpawnPoints)
+        // Find the parent GameObject containing all swingable prefabs
+        GameObject swingables = GameObject.Find(SceneStrings.swingables);
+        if (swingables == null)
         {
-            GameObject swingable = Instantiate(swingablePrefab, spawnPoint.position, Quaternion.identity);
-            swingableInstances.Add(swingable); // Keep track of swingables for future reference
-            SwingCollider swingCollider = swingable.GetComponent<SwingCollider>();
-            if (swingCollider != null)
+            Debug.Log("No swingables found in scene: " + SceneManager.GetActiveScene().name);
+            return;
+        }
+
+        // Iterate through each child of the swingables GameObject
+        Debug.Log("Spawning Swingables");
+        foreach (Transform swing in swingables.transform)
+        {
+            // Instantiate the swingable prefab at the position of the child
+            swing.gameObject.SetActive(true);
+            swingableInstances.Add(swing.gameObject); // Keep track of swingables for future reference
+
+            // Set the player reference in the swingable
+            if (swing.gameObject.TryGetComponent<SwingController>(out SwingController newSwingController))
             {
-                swingCollider.SetPlayerReference(currentPlayer);
+                newSwingController.SetPlayerReference(currentPlayer);
             }
         }
     }
+
+    // Only spawns Mice right now
+    private void SpawnEnemies()
+    {
+        // Find where to grab mice enemies from
+        bool isFirstLoad = enemyInstances.Count == 0;
+
+        if (isFirstLoad)
+        {
+            GameObject miceEnemies = GameObject.Find(SceneStrings.miceEnemies);
+            if (miceEnemies == null)
+            {
+                Debug.Log("No mouse enemies found in scene: " + SceneManager.GetActiveScene().name);
+                return;
+            }
+
+            Debug.Log("Spawning mice enemies");
+            foreach (Transform enemy in miceEnemies.transform)
+            {
+                if (isFirstLoad)
+                {
+                    // Activate all enemies if this is the first load
+                    enemy.gameObject.SetActive(true);
+                    enemyInstances.Add(enemy.gameObject);
+                }
+            }
+        }
+        else
+        {
+            // Set active state based on loaded data for previously loaded enemies
+            foreach (GameObject enemy in enemyInstances)
+            {
+                health enemyHealth = enemy.GetComponent<health>();
+                if (enemyHealth != null)
+                {
+                    // Activate enemy if it is not dead
+                    enemy.SetActive(!enemyHealth.IsDead);
+                }
+            }
+        }
+    }
+    #endregion
 
     private void UpdateRopeSwingPlayerRefs()
     {
         foreach (GameObject swingable in swingableInstances)
         {
-            SwingCollider swingCollider = swingable.GetComponent<SwingCollider>();
+            SwingController swingCollider = swingable.GetComponent<SwingController>();
             if (swingCollider != null)
             {
                 swingCollider.SetPlayerReference(currentPlayer);
@@ -142,7 +331,7 @@ public class GameManager : MonoBehaviour
             Destroy(currentPlayer);
         }
 
-        SpawnPlayer();
+        SpawnPlayer(new PlayerData());
     }
 
     public GameObject GetCurrentPlayer()

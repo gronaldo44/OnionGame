@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class playerDoDamage : MonoBehaviour
+public class PlayerDoDamage : MonoBehaviour
 {
 
     bool attacking = false;
@@ -40,6 +40,7 @@ public class playerDoDamage : MonoBehaviour
 
     void Attack()
     {
+        Debug.Log("Player Attack");
         attacking = true;
         attackArea.SetActive(attacking);
     }

@@ -1,48 +1,47 @@
 using UnityEngine;
 
-public class enemyPatrol : MonoBehaviour
+/// <summary>
+/// Enemy spawns at pointA and patrols between pointA and pointB
+/// </summary>
+public class EnemyPatrol : MonoBehaviour
 {
-    public GameObject pointA;
-    public GameObject pointB;
+    public Transform pointA;
+    public Transform pointB;
     private Rigidbody2D rb;
     private Transform currentPoint;
     public float speed;
     private SpriteRenderer spriteRenderer;
-    //private Animation;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        //Animation animation = GetComponent<Animation>();
-        currentPoint = pointB.transform;
+        currentPoint = pointA; // Start at point A
         spriteRenderer = GetComponent<SpriteRenderer>();
-
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector2 point = currentPoint.position - transform.position;
-        if (currentPoint == pointB.transform)
-        {
-            rb.velocity = new Vector2(speed, 0);
-            spriteRenderer.flipX = true;
-        }
-        else
-        {
-            spriteRenderer.flipX = false;
-            rb.velocity = new Vector2(-speed, 0);
-        }
+        // Move towards the current point
+        Vector2 direction = (currentPoint.position - transform.position).normalized; // Calculate direction
+        rb.velocity = direction * speed; // Set velocity
 
-        if (Vector2.Distance(transform.position, currentPoint.position) < .5f && currentPoint == pointB.transform)
+        // Check if the enemy is close enough to switch points
+        if (Vector2.Distance(transform.position, currentPoint.position) < 0.5f)
         {
-            currentPoint = pointA.transform;
+            // Switch points
+            if (currentPoint == pointA)
+            {
+                currentPoint = pointB;
+                spriteRenderer.flipX = true; // Flip sprite when moving to point B
+            }
+            else
+            {
+                currentPoint = pointA;
+                spriteRenderer.flipX = false; // Flip sprite when moving to point A
+            }
         }
-        if (Vector2.Distance(transform.position, currentPoint.position) < .5f && currentPoint == pointA.transform)
-        {
-            currentPoint = pointB.transform;
-        }
-
     }
 }
+

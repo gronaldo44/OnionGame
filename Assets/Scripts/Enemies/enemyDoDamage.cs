@@ -1,24 +1,32 @@
 using UnityEngine;
 
-public class doDamage : MonoBehaviour
+public class EnemyDoDamage : MonoBehaviour
 {
+    private bool attacking = false;
 
-    bool attacking = false;
-
-    private GameObject attackArea = default;
-    private float timeToAttack = 0.25f;
-    private float timer = 0f;
+    [SerializeField] public EnemyAttackArea attackArea; // Reference to the EnemyAttackArea script
+    [SerializeField] private float timeToAttack = 0.25f;
+    [SerializeField] private float timer = 0f;
 
     // Start is called before the first frame update
     void Start()
     {
-        attackArea = transform.GetChild(0).gameObject;
-        attackArea.SetActive(false);
+        // Ensure the child GameObject has the EnemyAttackArea component
+        if (attackArea == null)
+        {
+            GameObject child = transform.GetChild(0).gameObject;
+            attackArea = child.GetComponent<EnemyAttackArea>();
+            if (attackArea == null)
+            {
+                Debug.LogError("EnemyAttackArea component not found on child object.");
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        // attacks every frame it can
         Attack();
 
         if (attacking)
@@ -29,15 +37,17 @@ public class doDamage : MonoBehaviour
             {
                 timer = 0;
                 attacking = false;
-                attackArea.SetActive(attacking);
+                attackArea.gameObject.SetActive(attacking);
             }
-
         }
     }
 
     void Attack()
     {
-        attacking = true;
-        attackArea.SetActive(attacking);
+        if (!attacking) // Prevent multiple activations
+        {
+            attacking = true;
+            attackArea.gameObject.SetActive(attacking);
+        }
     }
 }

@@ -6,27 +6,21 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     // UI Elements
-    public Slider healthBar;
+    [SerializeField] private Slider healthBar;
 
     private PlayerHealth playerHealth;
 
     void Start()
     {
-        ConnectHealthBarToPlayer();
-    }
-
-    private void ConnectHealthBarToPlayer()
-    {
-        // Find the PlayerHealth script and subscribe to the OnHealthChanged event
-        playerHealth = FindAnyObjectByType<PlayerHealth>();
-        if (playerHealth != null)
+        // Set the healthBar dynamically at runtime, if not already set
+        if (healthBar == null)
         {
-            playerHealth.OnHealthChanged.AddListener(UpdateHealthBar);
-            playerHealth.OnPlayerDied.AddListener(HandlePlayerDeath);
-        }
-        else
-        {
-            Debug.LogWarning("PlayerHealth component not found.");
+            healthBar = GameObject.Find(SceneStrings.mainCamera).GetComponent<Slider>();
+            if (healthBar == null)
+            {
+                Debug.LogError("HealthBar slider not found in the scene!");
+                return; // Prevent further execution if healthBar is missing
+            }
         }
     }
 
@@ -37,6 +31,9 @@ public class UIManager : MonoBehaviour
         if (playerHealth != null)
         {
             playerHealth.OnHealthChanged.RemoveListener(UpdateHealthBar);
+        } else
+        {
+            Debug.LogError("Could not find playerhealth");
         }
     }
 
@@ -46,6 +43,12 @@ public class UIManager : MonoBehaviour
 
     private void UpdateHealthBar(float newHealth)
     {
+        if (healthBar == null)
+        {
+            Debug.LogError("HealthBar is not assigned in the UIManager.");
+            return;
+        }
+
         healthBar.value = newHealth;
         Debug.Log("Health bar updated: " + newHealth);
     }
@@ -58,6 +61,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdatePlayerReference(GameObject newPlayer)
     {
+        Debug.Log("Update UI Player Reference: " + newPlayer.gameObject.name);
         // Unsubscribe from the previous player if necessary
         if (playerHealth != null)
         {
@@ -71,10 +75,11 @@ public class UIManager : MonoBehaviour
         {
             playerHealth.OnHealthChanged.AddListener(UpdateHealthBar);
             playerHealth.OnPlayerDied.AddListener(HandlePlayerDeath);
+            UpdateHealthBar(playerHealth.CurrentHealth);
         }
         else
         {
-            Debug.LogWarning("New player does not have a PlayerHealth component.");
+            Debug.LogError("PlayerHealth component not found");
         }
     }
 }
