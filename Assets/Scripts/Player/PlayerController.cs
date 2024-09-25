@@ -207,6 +207,7 @@ public class PlayerController : MonoBehaviour
             jumpBufferCounter = 0f;
         }
 
+
         HandleMovement();
 
         // Adjust gravity for better jump feel
@@ -241,6 +242,14 @@ public class PlayerController : MonoBehaviour
             currentSpeed = Mathf.MoveTowards(currentSpeed, 0, deceleration * Time.fixedDeltaTime);
         }
 
+        bool onWall = GetComponent<TouchingDirections>().IsOnWall;
+
+        if (onWall)
+        {
+            currentSpeed = 0f;
+            return;
+        }
+
         // Apply the calculated speed (only horizontal velocity)
         rb.velocity = new Vector2(currentSpeed, rb.velocity.y);
 
@@ -250,7 +259,13 @@ public class PlayerController : MonoBehaviour
 
     private void AdjustGravity()
     {
-        if (IsDashing || IsSwinging || IsSwingLunging || IsRopeSwinging)
+        if (IsSwinging || IsSwingLunging || IsRopeSwinging)
+        {
+            rb.gravityScale = normalGravityScale * 2;
+            return;
+        }
+
+        if (IsDashing)
         {
             // Use normal gravity or adjusted gravity based on state
             rb.gravityScale = normalGravityScale;
