@@ -145,11 +145,13 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = normalGravityScale; // Use normal gravity scale
-        rb.drag = 0f; // Ensure no unintended drag affects movement
+        rb.drag = 0f; // Ensure no unintended linear drag affects movement
+        rb.angularDrag = 0f; // Ensure no unintended angular drag affects rotation
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         animator = GetComponent<Animator>();
         touchingDirections = GetComponent<TouchingDirections>();
     }
+
 
     // Start is called before the first frame update
     void Start()
@@ -188,15 +190,19 @@ public class PlayerController : MonoBehaviour
     // Called on the Fixed Timestep in Unity making it ideal for physics calculations
     private void FixedUpdate()
     {
-        if (IsDashing || IsSwinging || IsSwingLunging)
+        if (IsDashing)
             return;
 
-        if (IsRopeSwinging)
+        // Handle swinging
+        if (IsSwinging || IsRopeSwinging)
         {
-            // Apply force based on player input to swing harder
-            float swingForce = 10f; // Adjust as needed
-            Vector2 forceDirection = new Vector2(moveInput.x, 0).normalized;
-            rb.AddForce(forceDirection * swingForce);
+            rb.gravityScale = normalGravityScale * 1.5f; // Use normal gravity during swinging
+            float torqueAmount = 50f;
+
+            if (Mathf.Abs(moveInput.x) > Mathf.Epsilon)
+            {
+                rb.AddTorque((-moveInput.x * moveInput.y) * torqueAmount);
+            }
             return;
         }
 
@@ -207,8 +213,10 @@ public class PlayerController : MonoBehaviour
             jumpBufferCounter = 0f;
         }
 
-
-        HandleMovement();
+        if (!IsSwinging && !IsSwingLunging)
+        {
+            HandleMovement();
+        }
 
         // Adjust gravity for better jump feel
         AdjustGravity();
@@ -221,6 +229,9 @@ public class PlayerController : MonoBehaviour
 
         animator.SetFloat(AnimationStrings.yVelocity, rb.velocity.y);
     }
+
+
+
 
     private void HandleMovement()
     {
@@ -261,36 +272,30 @@ public class PlayerController : MonoBehaviour
     {
         if (IsSwinging || IsSwingLunging || IsRopeSwinging)
         {
-            rb.gravityScale = normalGravityScale * 2;
+            rb.gravityScale = normalGravityScale; // Use normal gravity during swinging
             return;
         }
 
         if (IsDashing)
         {
-            // Use normal gravity or adjusted gravity based on state
             rb.gravityScale = normalGravityScale;
             return;
         }
-
         if (rb.velocity.y < 0)
         {
-            // Player is falling
             rb.gravityScale = normalGravityScale * fallMultiplier;
-            Debug.Log("Falling: gravityScale set to " + rb.gravityScale);
         }
         else if (rb.velocity.y > 0 && !isJumpPressed)
         {
-            // Player is ascending but has released the jump button
             rb.gravityScale = normalGravityScale * lowJumpMultiplier;
-            Debug.Log("Ascending (jump button released): gravityScale set to " + rb.gravityScale);
         }
         else
         {
-            // Player is ascending and holding the jump button
             rb.gravityScale = normalGravityScale;
-            Debug.Log("Ascending (jump button held): gravityScale set to " + rb.gravityScale);
         }
     }
+
+
 
     private void PerformJump()
     {
@@ -356,16 +361,17 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Swinging");
             animator.SetTrigger(AnimationStrings.swing);
-            rb.velocity = Vector2.zero;
-            rb.gravityScale = 0f;    // Must be called before Swing() resets it
+            // Do not modify velocity or gravity scale here
             IsSwinging = true;
         }
         if (context.canceled && IsSwinging && !touchingDirections.IsGrounded)
         {
-            Debug.Log("Swing lunged");
+            Debug.Log("Swing released");
             StartCoroutine(Swing());
         }
     }
+
+
 
     /// <summary>
     /// Performs a swing lunging the player in their movement direction
@@ -374,13 +380,9 @@ public class PlayerController : MonoBehaviour
     private IEnumerator Swing()
     {
         IsSwinging = false;
+        IsRopeSwinging = false;  // Reset rope swinging state if necessary
 
-        if (moveInput != Vector2.zero)
-        {
-            // Apply velocity in the direction of movement input
-            rb.velocity = moveInput.normalized * swingPower;
-            IsSwingLunging = true;
-        }
+        // Do not set rb.velocity; let the current velocity carry over
 
         rb.gravityScale = normalGravityScale;
         yield return new WaitForSeconds(swingTime);

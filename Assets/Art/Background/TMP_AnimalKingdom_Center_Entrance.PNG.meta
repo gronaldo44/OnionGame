@@ -156,7 +156,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      TMP_AnimalKingdom_Center_Entrance_0: 690673622232214763
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
