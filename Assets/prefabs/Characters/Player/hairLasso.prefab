@@ -48,6 +48,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerRb: {fileID: 0}
   playerController: {fileID: 0}
+  distanceJoint: {fileID: 0}
+  lineRenderer: {fileID: 0}
 --- !u!58 &6717292242164518199
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -83,7 +85,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.5
+  m_Radius: 0.1
 --- !u!120 &2968564488498846217
 LineRenderer:
   serializedVersion: 2
