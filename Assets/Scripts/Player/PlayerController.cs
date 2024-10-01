@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
 
     #region Swinging params
     private float swingPower = 18f;
-    private float swingTime = 0.5f;
+    private float swingTime = 0.4f;
     [SerializeField]
     private bool _canSwing = true;
     public bool CanSwing
@@ -190,18 +190,21 @@ public class PlayerController : MonoBehaviour
     // Called on the Fixed Timestep in Unity making it ideal for physics calculations
     private void FixedUpdate()
     {
-        if (IsDashing) { return; }
-
         if (DialogueManager.GetInstance().dialogueIsPlaying) //if dialogue is active return
         {
             return;
         }
-
-        if (IsDashing || IsSwinging || IsSwingLunging)
+        if (IsDashing || IsSwingLunging)    // a coroutine is setting physics 
+        {
             return;
+        }
+        if (IsSwinging) // the player is choosing where to swing
+        {
+            return;
+        }
 
         // Handle swinging
-        if (IsSwinging || IsRopeSwinging)
+        if (IsRopeSwinging)
         {
             rb.gravityScale = normalGravityScale * 1.5f; // Use normal gravity during swinging
             float torqueAmount = 50f;
@@ -236,9 +239,6 @@ public class PlayerController : MonoBehaviour
 
         animator.SetFloat(AnimationStrings.yVelocity, rb.velocity.y);
     }
-
-
-
 
     private void HandleMovement()
     {
@@ -277,7 +277,7 @@ public class PlayerController : MonoBehaviour
 
     private void AdjustGravity()
     {
-        if (IsSwinging || IsSwingLunging || IsRopeSwinging)
+        if (IsSwingLunging || IsRopeSwinging)
         {
             rb.gravityScale = normalGravityScale; // Use normal gravity during swinging
             return;
@@ -324,7 +324,6 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Releasing lasso");
             hairLassoController.ReleaseLasso(); // Notify HairLassoController to release the lasso
-            StartCoroutine(Swing());
         }
     }
 
@@ -368,7 +367,10 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Swinging");
             animator.SetTrigger(AnimationStrings.swing);
-            // Do not modify velocity or gravity scale here
+
+            // Hold the player in the air while they choose where to swing
+            rb.velocity = Vector2.zero;
+            rb.gravityScale = 0;
             IsSwinging = true;
         }
         if (context.canceled && IsSwinging && !touchingDirections.IsGrounded)
@@ -378,25 +380,24 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
-
     /// <summary>
-    /// Performs a swing lunging the player in their movement direction
+    /// Swing the player in the direction they're holding
     /// </summary>
     /// <returns></returns>
     private IEnumerator Swing()
     {
         IsSwinging = false;
-        IsRopeSwinging = false;  // Reset rope swinging state if necessary
-
-        // Do not set rb.velocity; let the current velocity carry over
-
         rb.gravityScale = normalGravityScale;
+        // Use the moveInput to determine the lunge direction
+        if (moveInput != Vector2.zero)
+        {
+            // Apply velocity in the direction of movement input
+            rb.velocity = moveInput * swingPower;
+            IsSwingLunging = true;
+        }
         yield return new WaitForSeconds(swingTime);
         IsSwingLunging = false;
         canDash = true;
-
-        // Optionally, reset any swing-specific states or effects here
     }
 
     /// <summary>
