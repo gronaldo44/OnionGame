@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private CameraManager cameraManager;
     // UI setup
     [SerializeField] private UIManager uiManager;
+    // DialogueSetup
+    [SerializeField] private DialogueManager dialogueManager;
 
     private GameObject currentPlayer;
     private List<GameObject> swingableInstances = new List<GameObject>();

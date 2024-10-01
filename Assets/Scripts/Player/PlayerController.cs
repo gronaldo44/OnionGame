@@ -148,7 +148,7 @@ public class PlayerController : MonoBehaviour
         rb.drag = 0f; // Ensure no unintended drag affects movement
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         animator = GetComponent<Animator>();
-        touchingDirections = GetComponent<TouchingDirections>();
+        touchingDirections = GetComponent<TouchingDirections>(); // **Initialized here**
     }
 
     // Start is called before the first frame update
@@ -188,6 +188,11 @@ public class PlayerController : MonoBehaviour
     // Called on the Fixed Timestep in Unity making it ideal for physics calculations
     private void FixedUpdate()
     {
+        if (DialogueManager.GetInstance().dialogueIsPlaying) //if dialogue is active return
+        {
+            return;
+        }
+
         if (IsDashing || IsSwinging || IsSwingLunging)
             return;
 
