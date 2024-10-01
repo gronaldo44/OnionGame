@@ -190,16 +190,14 @@ public class PlayerController : MonoBehaviour
     // Called on the Fixed Timestep in Unity making it ideal for physics calculations
     private void FixedUpdate()
     {
-<<<<<<< HEAD
-        if (IsDashing)
-=======
+        if (IsDashing) { return; }
+
         if (DialogueManager.GetInstance().dialogueIsPlaying) //if dialogue is active return
         {
             return;
         }
 
         if (IsDashing || IsSwinging || IsSwingLunging)
->>>>>>> GregBranch
             return;
 
         // Handle swinging

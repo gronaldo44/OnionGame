@@ -167,7 +167,9 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Diana_Front_Damage_0: 3293964951642045416
+      Diana_Front_Damage_1: -2405578850215580930
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
