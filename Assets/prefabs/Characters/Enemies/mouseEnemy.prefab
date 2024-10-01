@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3111044618214877333}
   - component: {fileID: 5925184580403178848}
   - component: {fileID: 904273693222316373}
+  - component: {fileID: 686214547785411201}
   m_Layer: 0
   m_Name: mouseEnemy
   m_TagString: Untagged
@@ -208,6 +209,28 @@ MonoBehaviour:
   attackArea: {fileID: 6812533833543857937}
   timeToAttack: 0.25
   timer: 0
+--- !u!95 &686214547785411201
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3264726093162775524}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 57e8ac05b19b63f4ca907dd7446db3fe, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &8759429678941625601
 PrefabInstance:
   m_ObjectHideFlags: 0

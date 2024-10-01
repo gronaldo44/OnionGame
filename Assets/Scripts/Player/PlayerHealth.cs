@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class PlayerHealth : MonoBehaviour
 {
     public float maxHealth = 50f;
+    private Animator animator;
     [SerializeField] private float _currHealth;
     public float CurrentHealth
     {
@@ -13,6 +12,7 @@ public class PlayerHealth : MonoBehaviour
         set { _currHealth = value; }
     }
     private bool isDead;
+    private string damageTaken = "isDamaged";
 
     // Event Controllers for UIManager
     public UnityEvent<float> OnHealthChanged;
@@ -22,10 +22,12 @@ public class PlayerHealth : MonoBehaviour
     {
         _currHealth = maxHealth;
         isDead = false;
+        animator = GetComponent<Animator>();
     }
 
     public void TakeDamage(float damage)
     {
+        animator.SetTrigger(damageTaken);
         if (isDead) return; // No damage if the player is already dead
 
         _currHealth = Mathf.Clamp(_currHealth - damage, 0, maxHealth);

@@ -4,7 +4,12 @@ public class health : MonoBehaviour
 {
     [SerializeField] private float startingHealth;
 
+    private Animator animator;
+
     private float _currentHealth;
+
+    private string damageTaken = "isDamaged";
+
     public float CurrentHealth
     {
         get { return _currentHealth; }
@@ -14,7 +19,8 @@ public class health : MonoBehaviour
             {
                 _currentHealth = 0;
                 IsDead = true;
-            } else
+            }
+            else
             {
                 // TODO HurtAnimation()
                 _currentHealth = value;
@@ -42,12 +48,15 @@ public class health : MonoBehaviour
     private void Start()
     {
         CurrentHealth = startingHealth;
+        animator = GetComponent<Animator>();
     }
 
     public void DamageTaken(float damage)
     {
         Debug.Log(gameObject.name + " Took Damage: " + damage);
+        animator.SetTrigger(damageTaken);
         CurrentHealth -= damage;
+        //animator.
         Debug.Log("Health: " + CurrentHealth + "/" + startingHealth);
     }
 
