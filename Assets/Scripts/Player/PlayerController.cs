@@ -149,7 +149,7 @@ public class PlayerController : MonoBehaviour
         rb.angularDrag = 0f; // Ensure no unintended angular drag affects rotation
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         animator = GetComponent<Animator>();
-        touchingDirections = GetComponent<TouchingDirections>();
+        touchingDirections = GetComponent<TouchingDirections>(); // **Initialized here**
     }
 
 
@@ -190,7 +190,16 @@ public class PlayerController : MonoBehaviour
     // Called on the Fixed Timestep in Unity making it ideal for physics calculations
     private void FixedUpdate()
     {
+<<<<<<< HEAD
         if (IsDashing)
+=======
+        if (DialogueManager.GetInstance().dialogueIsPlaying) //if dialogue is active return
+        {
+            return;
+        }
+
+        if (IsDashing || IsSwinging || IsSwingLunging)
+>>>>>>> GregBranch
             return;
 
         // Handle swinging
