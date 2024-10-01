@@ -1,3 +1,5 @@
-Sample dialogue. Woohoo. Sample Dialogue. Woohoo. 12345 12345.
+This is a test of the dialogue. 12345.
+
+This is the test of a dialogue that wraps in the dialogue box. Also, notice how your movement is locked.
 
 You have successfully interacted with the npc.
