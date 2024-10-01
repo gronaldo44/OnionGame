@@ -1,5 +1,7 @@
-This is a test of the dialogue. 12345.
+Infected Bird
 
-This is the test of a dialogue that wraps in the dialogue box. Also, notice how your movement is locked.
+I am a bird
 
-You have successfully interacted with the npc.
+I will have an attack but the engineers haven't made it yet :)
+
+Vivian drew me!!

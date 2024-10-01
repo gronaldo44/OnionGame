@@ -14,5 +14,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/EngineeringPlayground.unity
     guid: 71bd47b4f00c29c42b76c4fb31310da7
+  - enabled: 1
+    path: Assets/Scenes/RonaldsToybox.unity
+    guid: dd3dd431d12d6a44e890093eab2e89b7
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

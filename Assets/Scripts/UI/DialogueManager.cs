@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Linq;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -36,6 +37,7 @@ public class DialogueManager : MonoBehaviour
     {
         dialogueIsPlaying = false;
         dialoguePanel.SetActive(false);
+        
     }
 
     private void Update()
@@ -51,9 +53,21 @@ public class DialogueManager : MonoBehaviour
     public void EnterDialogueMode(TextAsset fullDialogueText)
     {
         linesOfDialogue = fullDialogueText.text.Split(new string[] { "\n" }, System.StringSplitOptions.RemoveEmptyEntries);
+        linesOfDialogue = linesOfDialogue.Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
 
         dialogueIsPlaying = true;
         dialoguePanel.SetActive(true);
+        Transform speaker = dialoguePanel.transform.Find("SpeakerName");
+        if (speaker != null)
+        {
+            TextMeshProUGUI speakerText = speaker.GetComponent<TextMeshProUGUI>();
+            speakerText.text = linesOfDialogue[dialogueIndex++];
+        }
+        else
+        {
+            Debug.LogError("SpeakerName not found");
+        }
+
 
         ContinueDialogue();
     }
@@ -69,8 +83,8 @@ public class DialogueManager : MonoBehaviour
     {
         if (dialogueIndex <= linesOfDialogue.Length - 1)
         {
-            dialogueText.text = linesOfDialogue[dialogueIndex];
-            dialogueIndex += 2; //skip the whitespace in between
+            dialogueText.text = linesOfDialogue[dialogueIndex++];
+            //dialogueIndex += 2; //skip the whitespace in between
         }
         else
         {
