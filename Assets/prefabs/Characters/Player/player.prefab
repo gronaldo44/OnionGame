@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4948851746632857723}
   m_Layer: 0
   m_Name: player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -88,7 +88,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: 2781115688205782869, guid: fc3209aae3b1d344dad4687078fe9254, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 3.52, y: 5.49}
@@ -137,6 +137,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
+  spawnLocation: {x: 0, y: 0, z: 0}
   jumpImpulse: 3.2
   jumpCutMultiplier: 0.5
   normalGravityScale: 1
@@ -146,7 +147,6 @@ MonoBehaviour:
   moveSpeed: 7.5
   acceleration: 20
   deceleration: 20
-  spawnLocation: {x: 0, y: 0, z: 0}
   _isMoving: 0
   dashingPower: 25
   dashingTime: 0.2
