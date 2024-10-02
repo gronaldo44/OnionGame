@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Linq;
-
 public class DialogueManager : MonoBehaviour
 {
     private static DialogueManager instance;
@@ -16,6 +15,7 @@ public class DialogueManager : MonoBehaviour
     [Header("Dialogue UI")]
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private TextMeshProUGUI dialogueText;
+
     private void Awake()
     {
         if (instance != null)
@@ -37,54 +37,62 @@ public class DialogueManager : MonoBehaviour
     {
         dialogueIsPlaying = false;
         dialoguePanel.SetActive(false);
-        
     }
 
     private void Update()
     {
-        if (!dialogueIsPlaying) { return; }
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            ContinueDialogue();
-        }
     }
 
     public void EnterDialogueMode(TextAsset fullDialogueText)
     {
+        if (fullDialogueText == null)
+        {
+            Debug.LogWarning("Dialogue text is null.");
+            return;
+        }
+
+        textFile = fullDialogueText; // Store reference to the textFile
         linesOfDialogue = fullDialogueText.text.Split(new string[] { "\n" }, System.StringSplitOptions.RemoveEmptyEntries);
         linesOfDialogue = linesOfDialogue.Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
 
-        dialogueIsPlaying = true;
-        dialoguePanel.SetActive(true);
+        // Set the NPC name (first line of the text)
         Transform speaker = dialoguePanel.transform.Find("SpeakerName");
         if (speaker != null)
         {
             TextMeshProUGUI speakerText = speaker.GetComponent<TextMeshProUGUI>();
-            speakerText.text = linesOfDialogue[dialogueIndex++];
+            speakerText.text = linesOfDialogue[0]; // First line is the NPC name
+            Debug.Log(speakerText.text);
         }
         else
         {
             Debug.LogError("SpeakerName not found");
         }
 
+        // Start dialogue from the second line (skip the first line for the NPC name)
+        dialogueIndex = 1;
+        dialogueIsPlaying = true;
+        dialoguePanel.SetActive(true);
 
         ContinueDialogue();
     }
 
     private void ExitDialogueMode()
     {
-        dialogueIsPlaying = false;
+        Debug.Log("Exit dialogue mode");
         dialoguePanel.SetActive(false);
         dialogueText.text = "";
+        dialogueIsPlaying = false;
+        dialogueIndex = 0;
+
+        textFile = null; // Clear the textFile reference after dialogue ends
     }
 
-    private void ContinueDialogue()
+    public void ContinueDialogue()
     {
-        if (dialogueIndex <= linesOfDialogue.Length - 1)
+        Debug.Log("dialogue index: " + dialogueIndex + "/" + linesOfDialogue.Length);
+        if (dialogueIndex < linesOfDialogue.Length)
         {
             dialogueText.text = linesOfDialogue[dialogueIndex++];
-            //dialogueIndex += 2; //skip the whitespace in between
         }
         else
         {

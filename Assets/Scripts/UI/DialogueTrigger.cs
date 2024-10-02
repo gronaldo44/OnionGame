@@ -20,13 +20,21 @@ public class DialogueTrigger : MonoBehaviour
 
     private void Update()
     {
-        if (inTriggerRange && !DialogueManager.GetInstance().dialogueIsPlaying) 
+        if (inTriggerRange && !DialogueManager.GetInstance().dialogueIsPlaying)
         {
-
             if (Input.GetKeyDown(KeyCode.E))
             {
+                Debug.Log("Initiating Dialogue");
                 interactIcon.SetActive(false);
                 DialogueManager.GetInstance().EnterDialogueMode(textFile);
+            }
+        }
+        else if (DialogueManager.GetInstance().dialogueIsPlaying && inTriggerRange)
+        {
+            // Only allow continuation of dialogue if it's already playing
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                DialogueManager.GetInstance().ContinueDialogue();
             }
         }
     }
