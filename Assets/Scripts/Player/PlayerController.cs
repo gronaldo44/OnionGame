@@ -219,8 +219,8 @@ public class PlayerController : MonoBehaviour
         // Handle buffered jumps
         if (jumpBufferCounter > 0f && coyoteTimeCounter > 0f)
         {
-            PerformJump();
             jumpBufferCounter = 0f;
+            PerformJump();
         }
 
         if (!IsSwinging && !IsSwingLunging)
