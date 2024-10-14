@@ -76,7 +76,7 @@ public class DialogueManager : MonoBehaviour
         ContinueDialogue();
     }
 
-    private void ExitDialogueMode()
+    public void ExitDialogueMode()
     {
         Debug.Log("Exit dialogue mode");
         dialoguePanel.SetActive(false);

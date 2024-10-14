@@ -185,15 +185,15 @@ public class PlayerController : MonoBehaviour
         if (IsDashing) return;
 
         // Additional non-physics updates can go here
+        if (DialogueManager.GetInstance().dialogueIsPlaying) //if dialogue is active return
+        {
+            return;
+        }
     }
 
     // Called on the Fixed Timestep in Unity making it ideal for physics calculations
     private void FixedUpdate()
     {
-        if (DialogueManager.GetInstance().dialogueIsPlaying) //if dialogue is active return
-        {
-            return;
-        }
         if (IsDashing || IsSwingLunging)    // a coroutine is setting physics 
         {
             return;
@@ -315,7 +315,7 @@ public class PlayerController : MonoBehaviour
     #region Player inputs and actions
     public void OnLasso(InputAction.CallbackContext context)
     {
-        if (context.started && !IsSwinging && !IsDashing)
+        if (context.started && !IsSwinging && !IsDashing && !DialogueManager.GetInstance().dialogueIsPlaying)
         {
             Debug.Log("Attempting to lasso");
             hairLassoController.TryAttachLasso(); // Notify HairLassoController to attach the lasso
@@ -333,6 +333,8 @@ public class PlayerController : MonoBehaviour
     /// <param name="context">Move Command</param>
     public void OnMove(InputAction.CallbackContext context)
     {
+        if (DialogueManager.GetInstance().dialogueIsPlaying) { return; } //Don't allow move while dialogue is playing
+
         // Directly set moveInput without smoothing
         moveInput = context.ReadValue<Vector2>();
         IsMoving = moveInput.magnitude > 0.1f;
@@ -363,7 +365,7 @@ public class PlayerController : MonoBehaviour
     /// <param name="context">Swing Command</param>
     public void OnSwing(InputAction.CallbackContext context)
     {
-        if (context.started && CanSwing && !touchingDirections.IsGrounded && !IsDashing && !IsSwinging)
+        if (context.started && CanSwing && !touchingDirections.IsGrounded && !IsDashing && !IsSwinging && !DialogueManager.GetInstance().dialogueIsPlaying)
         {
             Debug.Log("Swinging");
             animator.SetTrigger(AnimationStrings.swing);
@@ -406,7 +408,7 @@ public class PlayerController : MonoBehaviour
     /// <param name="context">Dash command</param>
     public void OnDash(InputAction.CallbackContext context)
     {
-        if (context.started && canDash && !IsSwingLunging && !IsSwinging)
+        if (context.started && canDash && !IsSwingLunging && !IsSwinging && !DialogueManager.GetInstance().dialogueIsPlaying)
         {
             Debug.Log("Dash");
             StartCoroutine(Dash());
@@ -448,6 +450,8 @@ public class PlayerController : MonoBehaviour
     /// <param name="context">Jump command</param>
     public void OnJump(InputAction.CallbackContext context)
     {
+        if (DialogueManager.GetInstance().dialogueIsPlaying) { return; } //Don't allow jump if dialogue is playing
+
         if (context.started && coyoteTimeCounter > 0)
         {
             animator.SetTrigger(AnimationStrings.jump);

@@ -36,6 +36,9 @@ public class DialogueTrigger : MonoBehaviour
             {
                 DialogueManager.GetInstance().ContinueDialogue();
             }
+        } else if (DialogueManager.GetInstance().dialogueIsPlaying && !inTriggerRange) //Leaving trigger range during dialogue
+        {
+            DialogueManager.GetInstance().ExitDialogueMode();
         }
     }
 
