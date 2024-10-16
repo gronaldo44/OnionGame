@@ -43,7 +43,7 @@ public class SwingController : MonoBehaviour
         if (collision.TryGetComponent<PlayerController>(out var player) && !_isRopeSwing)
         {
             Debug.Log("Can Swing");
-            playerController.CanSwing = true;
+            playerController.CanLaunch = true;
         }
         else if (collision.TryGetComponent<HairLassoController>(out var lasso) && _isRopeSwing)
         {
@@ -62,7 +62,7 @@ public class SwingController : MonoBehaviour
         if (collision.TryGetComponent<PlayerController>(out var player) && !_isRopeSwing)
         {
             Debug.Log("Can't Swing");
-            playerController.CanSwing = false;
+            playerController.CanLaunch = false;
         }
         else if (collision.TryGetComponent<HairLassoController>(out var lasso) && _isRopeSwing)
         {
