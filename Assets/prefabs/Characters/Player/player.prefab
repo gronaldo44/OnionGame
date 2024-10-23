@@ -368,8 +368,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.0059212353, y: 0.06982728}
-  m_Size: {x: 3.6840246, y: 5.5626082}
+  m_Offset: {x: 0.0059212353, y: 0.1420233}
+  m_Size: {x: 3.6840246, y: 5.418216}
   m_Direction: 0
 --- !u!114 &4979888522616503525
 MonoBehaviour:
@@ -681,6 +681,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: AttackArea
       objectReference: {fileID: 0}
+    - target: {fileID: 3097818951675460491, guid: 4502854c40824bf4bb4b87e85901e031, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6952639102144267843, guid: 4502854c40824bf4bb4b87e85901e031, type: 3}
       propertyPath: m_LocalPosition.x
       value: 5.13
@@ -720,6 +724,22 @@ PrefabInstance:
     - target: {fileID: 6952639102144267843, guid: 4502854c40824bf4bb4b87e85901e031, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 2.151
+      objectReference: {fileID: 0}
+    - target: {fileID: 8719009061827820900, guid: 4502854c40824bf4bb4b87e85901e031, type: 3}
+      propertyPath: m_Points.m_Paths.Array.data[0].Array.data[0].x
+      value: 0.16838568
+      objectReference: {fileID: 0}
+    - target: {fileID: 8719009061827820900, guid: 4502854c40824bf4bb4b87e85901e031, type: 3}
+      propertyPath: m_Points.m_Paths.Array.data[0].Array.data[0].y
+      value: 1.0408639
+      objectReference: {fileID: 0}
+    - target: {fileID: 8719009061827820900, guid: 4502854c40824bf4bb4b87e85901e031, type: 3}
+      propertyPath: m_Points.m_Paths.Array.data[0].Array.data[2].x
+      value: 0.076592654
+      objectReference: {fileID: 0}
+    - target: {fileID: 8719009061827820900, guid: 4502854c40824bf4bb4b87e85901e031, type: 3}
+      propertyPath: m_Points.m_Paths.Array.data[0].Array.data[2].y
+      value: -0.7133285
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

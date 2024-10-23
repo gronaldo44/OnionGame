@@ -123,8 +123,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.053912148, y: -0.49459502}
-  m_Size: {x: 5.93134, y: 6.833488}
+  m_Offset: {x: -0.16911867, y: -0.33164337}
+  m_Size: {x: 8.64975, y: 8.64975}
   m_Direction: 0
 --- !u!114 &4492426280349132610
 MonoBehaviour:
@@ -138,9 +138,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5035eb034d7e59545a506191e5ff4828, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isRopeSwing: 1
+  _isRopeSwing: 0
   player: {fileID: 1740235488506837435, guid: 2b5faf6b84204d84e8d68aef79c47a9a, type: 3}
-  hairLasso: {fileID: 2206823500860226070, guid: 8661ef1fb30f66c41bfe38d335a0ba4c, type: 3}
 --- !u!50 &6756187104686308766
 Rigidbody2D:
   serializedVersion: 4
