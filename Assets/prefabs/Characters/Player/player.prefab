@@ -152,9 +152,9 @@ MonoBehaviour:
   dashingTime: 0.2
   dashingCD: 0.5
   _isDashing: 0
-  _canSwing: 0
-  _isSwinging: 0
-  _isSwingLunging: 0
+  launchDir: {x: 0, y: 0}
+  _canLaunch: 1
+  _isLaunching: 0
   hairLassoController: {fileID: 7572530635035534383}
   _canRopeSwing: 0
   _isRopeSwinging: 0
@@ -284,8 +284,8 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8920189008569541561}
-        m_TargetAssemblyTypeName: playerController, Assembly-CSharp
-        m_MethodName: OnSwing
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnFlowerLaunch
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

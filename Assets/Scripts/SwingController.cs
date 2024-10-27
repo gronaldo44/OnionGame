@@ -21,9 +21,7 @@ public class SwingController : MonoBehaviour
             }
         }
     }
-    [SerializeField]
-    private GameObject player;
-
+    [SerializeField] private GameObject player;
     private HairLassoController hairLassoController;
     private PlayerController playerController;
 
@@ -42,12 +40,13 @@ public class SwingController : MonoBehaviour
     {
         if (collision.TryGetComponent<PlayerController>(out var player) && !_isRopeSwing)
         {
-            Debug.Log("Can Swing");
-            playerController.CanSwing = true;
+            Debug.Log("Can FlowerLaunch");
+            playerController.CanLaunch = true;
+            playerController.launchDir = transform.right;
         }
         else if (collision.TryGetComponent<HairLassoController>(out var lasso) && _isRopeSwing)
         {
-            Debug.Log("Can LassoSwing");
+            Debug.Log("Can RopeSwing");
             hairLassoController.SetSwingableObject(gameObject);
         }
     }
@@ -61,8 +60,9 @@ public class SwingController : MonoBehaviour
     {
         if (collision.TryGetComponent<PlayerController>(out var player) && !_isRopeSwing)
         {
-            Debug.Log("Can't Swing");
-            playerController.CanSwing = false;
+            Debug.Log("Can't FlowerLaunch");
+            playerController.CanLaunch = false;
+            playerController.launchDir = Vector2.zero;
         }
         else if (collision.TryGetComponent<HairLassoController>(out var lasso) && _isRopeSwing)
         {

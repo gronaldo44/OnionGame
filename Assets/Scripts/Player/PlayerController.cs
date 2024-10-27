@@ -77,35 +77,25 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
-    #region Swinging params
-    private float swingPower = 18f;
-    private float swingTime = 0.4f;
+    #region Swingables params
+    private float launchPower = 18f;
+    private float launchTime = 0.4f;
+    public Vector2 launchDir = Vector2.zero;
     [SerializeField]
-    private bool _canSwing = true;
-    public bool CanSwing
+    private bool _canLaunch = true;
+    public bool CanLaunch
     {
-        get => _canSwing;
-        set => _canSwing = value;
+        get => _canLaunch;
+        set => _canLaunch = value;
     }
     [SerializeField]
-    private bool _isSwinging;
-    public bool IsSwinging
+    private bool _isLaunching;
+    public bool IsLaunching
     {
-        get => _isSwinging;
+        get => _isLaunching;
         set
         {
-            _isSwinging = value;
-            animator.SetBool(AnimationStrings.isSwinging, value);
-        }
-    }
-    [SerializeField]
-    private bool _isSwingLunging;
-    public bool IsSwingLunging
-    {
-        get => _isSwingLunging;
-        set
-        {
-            _isSwingLunging = value;
+            _isLaunching = value;
             animator.SetBool(AnimationStrings.isSwingLunging, value);
         }
     }
@@ -194,11 +184,7 @@ public class PlayerController : MonoBehaviour
     // Called on the Fixed Timestep in Unity making it ideal for physics calculations
     private void FixedUpdate()
     {
-        if (IsDashing || IsSwingLunging)    // a coroutine is setting physics 
-        {
-            return;
-        }
-        if (IsSwinging) // the player is choosing where to swing
+        if (IsDashing || IsLaunching)    // a coroutine is setting physics 
         {
             return;
         }
@@ -223,10 +209,7 @@ public class PlayerController : MonoBehaviour
             PerformJump();
         }
 
-        if (!IsSwinging && !IsSwingLunging)
-        {
-            HandleMovement();
-        }
+        HandleMovement();
 
         // Adjust gravity for better jump feel
         AdjustGravity();
@@ -277,7 +260,7 @@ public class PlayerController : MonoBehaviour
 
     private void AdjustGravity()
     {
-        if (IsSwingLunging || IsRopeSwinging)
+        if (IsLaunching || IsRopeSwinging)
         {
             rb.gravityScale = normalGravityScale; // Use normal gravity during swinging
             return;
@@ -315,7 +298,7 @@ public class PlayerController : MonoBehaviour
     #region Player inputs and actions
     public void OnLasso(InputAction.CallbackContext context)
     {
-        if (context.started && !IsSwinging && !IsDashing && !DialogueManager.GetInstance().dialogueIsPlaying)
+        if (context.started && !IsLaunching && !IsDashing && !DialogueManager.GetInstance().dialogueIsPlaying)
         {
             Debug.Log("Attempting to lasso");
             hairLassoController.TryAttachLasso(); // Notify HairLassoController to attach the lasso
@@ -360,45 +343,32 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// Called when a player issues a swing command
+    /// Called when a player issues a launch command
     /// </summary>
     /// <param name="context">Swing Command</param>
-    public void OnSwing(InputAction.CallbackContext context)
+    public void OnFlowerLaunch(InputAction.CallbackContext context)
     {
-        if (context.started && CanSwing && !touchingDirections.IsGrounded && !IsDashing && !IsSwinging && !DialogueManager.GetInstance().dialogueIsPlaying)
+        if (context.started && CanLaunch && !touchingDirections.IsGrounded && !IsDashing && !IsLaunching && !DialogueManager.GetInstance().dialogueIsPlaying)
         {
-            Debug.Log("Swinging");
-            animator.SetTrigger(AnimationStrings.swing);
-
-            // Hold the player in the air while they choose where to swing
-            rb.velocity = Vector2.zero;
-            rb.gravityScale = 0;
-            IsSwinging = true;
-        }
-        if (context.canceled && IsSwinging && !touchingDirections.IsGrounded)
-        {
-            Debug.Log("Swing released");
-            StartCoroutine(Swing());
+            Debug.Log("Flower Launch");
+            animator.SetTrigger(AnimationStrings.swing);    // TODO
+            StartCoroutine(FlowerLaunch());
         }
     }
 
     /// <summary>
-    /// Swing the player in the direction they're holding
+    /// Luanch the player in the direction of the Flower
     /// </summary>
     /// <returns></returns>
-    private IEnumerator Swing()
+    private IEnumerator FlowerLaunch()
     {
-        IsSwinging = false;
         rb.gravityScale = normalGravityScale;
-        // Use the moveInput to determine the lunge direction
-        if (moveInput != Vector2.zero)
-        {
-            // Apply velocity in the direction of movement input
-            rb.velocity = moveInput * swingPower;
-            IsSwingLunging = true;
-        }
-        yield return new WaitForSeconds(swingTime);
-        IsSwingLunging = false;
+        // Apply velocity in the direction of movement input
+        rb.velocity = launchDir * launchPower;
+        IsLaunching = true;
+        yield return new WaitForSeconds(launchTime);
+        currentSpeed = rb.velocity.x;
+        IsLaunching = false;
         canDash = true;
     }
 
@@ -408,7 +378,7 @@ public class PlayerController : MonoBehaviour
     /// <param name="context">Dash command</param>
     public void OnDash(InputAction.CallbackContext context)
     {
-        if (context.started && canDash && !IsSwingLunging && !IsSwinging && !DialogueManager.GetInstance().dialogueIsPlaying)
+        if (context.started && canDash && !IsLaunching && !IsLaunching && !DialogueManager.GetInstance().dialogueIsPlaying)
         {
             Debug.Log("Dash");
             StartCoroutine(Dash());
