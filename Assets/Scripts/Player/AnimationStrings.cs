@@ -17,5 +17,6 @@ internal class AnimationStrings
     internal static string ropeSwing = "ropeSwing";
     internal static string isRopeSwinging = "isRopeSwinging";
     internal static string isDamaged = "isDamaged";
+    internal static string isAttacking = "playerAttacking";
 }
 

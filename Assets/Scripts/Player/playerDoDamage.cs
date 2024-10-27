@@ -6,12 +6,14 @@ public class PlayerDoDamage : MonoBehaviour
     bool attacking = false;
 
     private GameObject attackArea = default;
+    Animator animator;
     private float timeToAttack = 0.25f;
     private float timer = 0f;
 
     // Start is called before the first frame update
     void Start()
     {
+        animator = GetComponent<Animator>();
         attackArea = transform.GetChild(0).gameObject;
         attackArea.SetActive(false);
     }
@@ -21,6 +23,8 @@ public class PlayerDoDamage : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
+            Debug.Log("Attack Animation");
+            animator.SetTrigger(AnimationStrings.isAttacking);
             Attack();
         }
 
