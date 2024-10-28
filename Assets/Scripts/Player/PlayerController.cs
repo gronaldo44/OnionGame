@@ -24,7 +24,25 @@ public class PlayerController : MonoBehaviour
     public float lowJumpMultiplier = 2.5f;    // Gravity multiplier for short jumps
     public float additionalJumpForce = 1f;    // Optional upward force during ascent
 
-    private bool isJumpPressed = false;        // Tracks if the jump button is held
+    private bool _isJumpPressed = false;        // Tracks if the jump button is held
+    private bool isJumpPressed
+    {
+        get
+        {
+            return _isJumpPressed;
+        }
+        set
+        {
+            _isJumpPressed = value;
+            if (_isJumpPressed)
+            {
+                //Debug.Log("Jump pressed");
+            } else
+            {
+                //Debug.Log("Jump released");
+            }
+        }
+    }
     #endregion
 
     #region Movement params
@@ -82,11 +100,18 @@ public class PlayerController : MonoBehaviour
     private float launchTime = 0.4f;
     public Vector2 launchDir = Vector2.zero;
     [SerializeField]
-    private bool _canLaunch = true;
+    private bool _canLaunch = false;
     public bool CanLaunch
     {
         get => _canLaunch;
-        set => _canLaunch = value;
+        set
+        {
+            _canLaunch = value;
+            if (_canLaunch)
+            {
+                Debug.Log("Can Launch");
+            }
+        }
     }
     [SerializeField]
     private bool _isLaunching;
@@ -146,7 +171,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        CanLaunch = false;
     }
 
     // Update is called once per frame
@@ -229,7 +254,7 @@ public class PlayerController : MonoBehaviour
         float targetSpeed = moveInput.x * moveSpeed;
 
         // Debug input and target speed
-        Debug.Log($"moveInput.x: {moveInput.x}, targetSpeed: {targetSpeed}, currentSpeed: {currentSpeed}");
+        //Debug.Log($"moveInput.x: {moveInput.x}, targetSpeed: {targetSpeed}, currentSpeed: {currentSpeed}");
 
         // Calculate acceleration or deceleration
         if (Mathf.Abs(targetSpeed) > Mathf.Epsilon)
@@ -255,7 +280,7 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector2(currentSpeed, rb.velocity.y);
 
         // Debug applied velocity
-        Debug.Log($"Applied velocity: {rb.velocity}");
+        //Debug.Log($"Applied velocity: {rb.velocity}");
     }
 
     private void AdjustGravity()
@@ -289,10 +314,10 @@ public class PlayerController : MonoBehaviour
 
     private void PerformJump()
     {
+        Debug.Log("Jumping");
         animator.SetTrigger(AnimationStrings.jump);
         rb.AddForce(new Vector2(0, jumpImpulse), ForceMode2D.Impulse); // Apply upward impulse
         coyoteTimeCounter = 0f;
-        isJumpPressed = true;
     }
 
     #region Player inputs and actions
@@ -381,6 +406,7 @@ public class PlayerController : MonoBehaviour
         if (context.started && canDash && !IsLaunching && !IsLaunching && !DialogueManager.GetInstance().dialogueIsPlaying)
         {
             Debug.Log("Dash");
+            IsDashing = true;
             StartCoroutine(Dash());
         }
     }
@@ -392,7 +418,6 @@ public class PlayerController : MonoBehaviour
     private IEnumerator Dash()
     {
         canDash = false;
-        IsDashing = true;
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f;
 
@@ -407,6 +432,7 @@ public class PlayerController : MonoBehaviour
 
         rb.gravityScale = originalGravity;
         IsDashing = false;
+        Debug.Log("finished dash");
 
         yield return new WaitForSeconds(dashingCD);
         canDash = true;
@@ -422,8 +448,9 @@ public class PlayerController : MonoBehaviour
     {
         if (DialogueManager.GetInstance().dialogueIsPlaying) { return; } //Don't allow jump if dialogue is playing
 
-        if (context.started && coyoteTimeCounter > 0)
+        if (context.started && coyoteTimeCounter > 0 && !IsDashing && !isJumpPressed)
         {
+            Debug.Log("Jump");
             animator.SetTrigger(AnimationStrings.jump);
             rb.AddForce(new Vector2(0, jumpImpulse), ForceMode2D.Impulse); // Apply upward impulse
             coyoteTimeCounter = 0;
