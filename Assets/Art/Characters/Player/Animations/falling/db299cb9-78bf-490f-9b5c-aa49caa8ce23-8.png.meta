@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f482239b0ef19ae41885d04c6bc624e9
+guid: 39d6fd0b99bf8ee43be9881b4947ae1a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2056538800001431341
-    second: 8cb12d6c-7a09-470f-93c6-a2cbb89348d1-5_0
+      213: -7457414977376098899
+    second: db299cb9-78bf-490f-9b5c-aa49caa8ce23-8_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -97,6 +97,19 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
+    buildTarget: Windows Store Apps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
     buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -126,13 +139,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 8cb12d6c-7a09-470f-93c6-a2cbb89348d1-5_0
+      name: db299cb9-78bf-490f-9b5c-aa49caa8ce23-8_0
       rect:
         serializedVersion: 2
-        x: 242
-        y: 13
-        width: 496
-        height: 429
+        x: 293
+        y: 16
+        width: 648
+        height: 542
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -140,8 +153,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3d84b1f7bd4b573e0800000000000000
-      internalID: -2056538800001431341
+      spriteID: da5e1d2d690f18890800000000000000
+      internalID: -7457414977376098899
       vertices: []
       indices: 
       edges: []
@@ -157,7 +170,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      8cb12d6c-7a09-470f-93c6-a2cbb89348d1-5_0: -2056538800001431341
+      db299cb9-78bf-490f-9b5c-aa49caa8ce23-8_0: -7457414977376098899
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

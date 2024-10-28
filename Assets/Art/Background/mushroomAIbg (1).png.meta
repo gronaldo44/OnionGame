@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3be977d16f1cb4348a98ba639367cc26
+guid: 34022450c60f42043b54014fa42a7c57
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2548870815546534804
-    second: 8cb12d6c-7a09-470f-93c6-a2cbb89348d1-3_0
+      213: 8104591385571605023
+    second: mushroomAIbg (1)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 8cb12d6c-7a09-470f-93c6-a2cbb89348d1-3_0
+      name: mushroomAIbg (1)_0
       rect:
         serializedVersion: 2
-        x: 246
-        y: 13
-        width: 481
-        height: 428
+        x: 0
+        y: 0
+        width: 7168
+        height: 2392
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -140,8 +140,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c641dfc6f7790acd0800000000000000
-      internalID: -2548870815546534804
+      spriteID: f1abfaadcea497070800000000000000
+      internalID: 8104591385571605023
       vertices: []
       indices: 
       edges: []
@@ -157,7 +157,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      8cb12d6c-7a09-470f-93c6-a2cbb89348d1-3_0: -2548870815546534804
+      mushroomAIbg (1)_0: 8104591385571605023
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
