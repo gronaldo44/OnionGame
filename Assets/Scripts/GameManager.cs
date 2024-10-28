@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
 
     public void ChangeScene(string sceneName)
     {
+        Debug.Log("Changing Scene: " + sceneName);
         SaveGame(sceneName); // Save the current scene's data
         StartCoroutine(LoadSceneAndGame(sceneName)); // Start loading new scene
     }

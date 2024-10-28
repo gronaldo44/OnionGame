@@ -9,6 +9,10 @@ public class SceneTrigger : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        gameManager.ChangeScene(sceneDestination);
+        if (collision.TryGetComponent<PlayerController>(out var player))
+        {
+            Debug.Log("Triggered Scene Change: " + sceneDestination);
+            gameManager.ChangeScene(sceneDestination);
+        }
     }
 }

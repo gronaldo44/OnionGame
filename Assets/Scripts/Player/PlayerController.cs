@@ -432,7 +432,7 @@ public class PlayerController : MonoBehaviour
 
         rb.gravityScale = originalGravity;
         IsDashing = false;
-        Debug.Log("finished dash");
+        //Debug.Log("finished dash");
 
         yield return new WaitForSeconds(dashingCD);
         canDash = true;
@@ -448,7 +448,7 @@ public class PlayerController : MonoBehaviour
     {
         if (DialogueManager.GetInstance().dialogueIsPlaying) { return; } //Don't allow jump if dialogue is playing
 
-        if (context.started && coyoteTimeCounter > 0 && !IsDashing && !isJumpPressed)
+        if (context.started && coyoteTimeCounter > 0)
         {
             Debug.Log("Jump");
             animator.SetTrigger(AnimationStrings.jump);
