@@ -96,7 +96,7 @@ public class PlayerController : MonoBehaviour
         set
         {
             _isLaunching = value;
-            animator.SetBool(AnimationStrings.isSwingLunging, value);
+            animator.SetBool(AnimationStrings.isFlowerLaunching, value);
         }
     }
 
@@ -351,7 +351,7 @@ public class PlayerController : MonoBehaviour
         if (context.started && CanLaunch && !touchingDirections.IsGrounded && !IsDashing && !IsLaunching && !DialogueManager.GetInstance().dialogueIsPlaying)
         {
             Debug.Log("Flower Launch");
-            animator.SetTrigger(AnimationStrings.swing);    // TODO
+            animator.SetTrigger(AnimationStrings.flowerLaunch);   
             StartCoroutine(FlowerLaunch());
         }
     }

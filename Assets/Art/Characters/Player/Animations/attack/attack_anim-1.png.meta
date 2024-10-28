@@ -156,7 +156,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      attack_anim-1_0: -825134838958323012
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
