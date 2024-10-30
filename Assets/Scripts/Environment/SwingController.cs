@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using UnityEngine;
 
 /// <summary>
@@ -7,6 +8,7 @@ using UnityEngine;
 /// </summary>
 public class SwingController : MonoBehaviour
 {
+    GameObject ring;
     [SerializeField] private bool _isRopeSwing;
     public bool IsRopeSwing
     {
@@ -30,6 +32,10 @@ public class SwingController : MonoBehaviour
     {
         playerController = player.GetComponent<PlayerController>();
         hairLassoController = playerController.hairLassoController;
+
+        ring = transform.Find("RING_0").gameObject;
+        SpriteRenderer ringSprite = ring.GetComponent<SpriteRenderer>();
+        ringSprite.color = new Color(ringSprite.color.r, ringSprite.color.g, ringSprite.color.b, 0);
     }
 
     /// <summary>
@@ -48,6 +54,8 @@ public class SwingController : MonoBehaviour
         {
             Debug.Log("Can RopeSwing");
             hairLassoController.SetSwingableObject(gameObject);
+
+            FadeIn(0.5f);
         }
     }
 
@@ -71,6 +79,8 @@ public class SwingController : MonoBehaviour
             {
                 Debug.Log("Can't LassoSwing");
                 hairLassoController.ClearSwingableObject();
+
+                FadeOut(0.5f);
             }
         }
     }
@@ -82,5 +92,33 @@ public class SwingController : MonoBehaviour
             playerController = player.GetComponent<PlayerController>();
             hairLassoController = playerController.hairLassoController;
         }
+    }
+
+    public void FadeIn(float duration)
+    {
+        StartCoroutine(Fade(0, 1, duration)); // From transparent (0) to opaque (1)
+    }
+
+    public void FadeOut(float duration)
+    {
+        StartCoroutine(Fade(1, 0, duration)); // From opaque (1) to transparent (0)
+    }
+
+    private IEnumerator Fade(float startAlpha, float endAlpha, float duration)
+    {
+        SpriteRenderer ringSpriteRenderer = ring.GetComponent<SpriteRenderer>();
+        float elapsedTime = 0f;
+        Color startColor = ringSpriteRenderer.color;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = Mathf.Lerp(startAlpha, endAlpha, elapsedTime / duration);
+            ringSpriteRenderer.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
+            yield return null; // Wait for the next frame
+        }
+
+        // Ensure the final alpha value is set
+        ringSpriteRenderer.color = new Color(startColor.r, startColor.g, startColor.b, endAlpha);
     }
 }
