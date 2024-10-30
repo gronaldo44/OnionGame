@@ -61,8 +61,6 @@ public struct PlayerData
 public struct EnemyData
 {
     public GameObject enemyPrefab;
-    public Vector3 enemyPatrolPositionA;
-    public Vector3 enemyPatrolPositionB;
     public bool isActive;
 
     /// <summary>
@@ -72,11 +70,9 @@ public struct EnemyData
     /// <param name="patrolPosA">spawn location</param>
     /// <param name="patrolPosB">patrol location</param>
     /// <param name="isActive"></param>
-    public EnemyData(GameObject type, Vector3 patrolPosA, Vector3 patrolPosB, bool isActive)
+    public EnemyData(GameObject type, bool isActive)
     {
         enemyPrefab = type;
-        enemyPatrolPositionA = patrolPosA;
-        enemyPatrolPositionB = patrolPosB;
         this.isActive = isActive;
     }
 }

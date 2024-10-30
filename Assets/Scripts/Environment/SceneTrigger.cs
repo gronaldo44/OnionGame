@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class SceneTrigger : MonoBehaviour
 {
-    [SerializeField] private GameManager gameManager;
     [SerializeField] private string sceneDestination;
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -12,7 +11,14 @@ public class SceneTrigger : MonoBehaviour
         if (collision.TryGetComponent<PlayerController>(out var player))
         {
             Debug.Log("Triggered Scene Change: " + sceneDestination);
-            gameManager.ChangeScene(sceneDestination);
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.ChangeScene(sceneDestination);
+            }
+            else
+            {
+                Debug.LogError("GameManager instance is null. Cannot change scene.");
+            }
         }
     }
 }

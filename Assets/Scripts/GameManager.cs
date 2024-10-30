@@ -34,11 +34,12 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Make this instance persistent across scenes
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(gameObject); // Destroy duplicate instances
+            Destroy(gameObject);
+            return; // Exit if we destroy this instance
         }
         saveLoadManager = new SaveLoadManager();
     }
@@ -101,6 +102,7 @@ public class GameManager : MonoBehaviour
 
         // Create PlayerData from player stats
         PlayerData playerData = new PlayerData(playerHealth.maxHealth, playerHealth.CurrentHealth, playerPosition, playerSpawn);
+        Destroy(currentPlayer);
 
         // Capture swingables positions
         List<SwingableData> swingableDataList = new List<SwingableData>();
@@ -115,7 +117,7 @@ public class GameManager : MonoBehaviour
         foreach (GameObject enemy in enemyInstances)
         {
             EnemyPatrol patrol = enemy.GetComponent<EnemyPatrol>();
-            enemyDataList.Add(new EnemyData(enemy, patrol.pointA.position, patrol.pointB.position, true));
+            enemyDataList.Add(new EnemyData(enemy, true));
         }
 
         // Create the GameData object with player, swingables, and enemies
@@ -130,11 +132,19 @@ public class GameManager : MonoBehaviour
         Debug.Log("Loading Game: " + sceneName);
         GameData gameData = saveLoadManager.LoadGame(sceneName);
 
+        // Clear previous references
+        currentPlayer = null;
+        swingableInstances.Clear();
+        enemyInstances.Clear();
+
+        if (GameObject.Find(SceneStrings.playerSpawn) == null)
+        {
+            return; // Handle no player spawn found
+        }
+
         // Spawn player with the loaded game data
         SpawnPlayer(gameData.player);
-        // Load environment objects
         LoadSwingables(gameData.swingables);
-        // Load enemies
         LoadEnemies(gameData.enemies);
     }
 
@@ -161,18 +171,13 @@ public class GameManager : MonoBehaviour
         enemyInstances.Clear();
         foreach (EnemyData enemyData in enemies)
         {
-            GameObject enemy = Instantiate(enemyData.enemyPrefab, enemyData.enemyPatrolPositionA, Quaternion.identity);
+            GameObject enemy = Instantiate(enemyData.enemyPrefab);
             if (!enemyData.isActive)
             {
                 health hp = enemy.GetComponent<health>();
                 hp.IsDead = true;
             }
             EnemyPatrol patrol = enemy.GetComponent<EnemyPatrol>();
-            if (patrol != null)
-            {
-                patrol.pointA.position = enemyData.enemyPatrolPositionA;
-                patrol.pointB.position = enemyData.enemyPatrolPositionB;
-            }
             enemyInstances.Add(enemy);
         }
 
@@ -196,7 +201,7 @@ public class GameManager : MonoBehaviour
             PlayerHealth playerHealth = currentPlayer.GetComponent<PlayerHealth>();
             if (playerHealth != null)
             {
-                playerHealth.CurrentHealth = playerData.playerHealth; // Restore player health
+                playerHealth.CurrentHealth = playerData.playerHealth; // Resftore player health
                 playerHealth.OnPlayerDied.AddListener(HandlePlayerDeath);
             }
         }
