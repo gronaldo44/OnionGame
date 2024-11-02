@@ -1,8 +1,8 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerDoDamage : MonoBehaviour
 {
-
     bool attacking = false;
 
     private GameObject attackArea = default;
@@ -21,13 +21,6 @@ public class PlayerDoDamage : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            Debug.Log("Attack Animation");
-            animator.SetTrigger(AnimationStrings.isAttacking);
-            Attack();
-        }
-
         if (attacking)
         {
             timer += Time.deltaTime;
@@ -38,7 +31,17 @@ public class PlayerDoDamage : MonoBehaviour
                 attacking = false;
                 attackArea.SetActive(attacking);
             }
+        }
+    }
 
+    // This method is called when the attack button is pressed
+    public void OnAttack(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            Debug.Log("Attack Animation");
+            animator.SetTrigger(AnimationStrings.isAttacking);
+            Attack();
         }
     }
 
