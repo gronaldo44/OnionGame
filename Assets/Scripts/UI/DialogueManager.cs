@@ -61,7 +61,8 @@ public class DialogueManager : MonoBehaviour
         {
             TextMeshProUGUI speakerText = speaker.GetComponent<TextMeshProUGUI>();
             speakerText.text = linesOfDialogue[0]; // First line is the NPC name
-            Debug.Log(speakerText.text);
+            Debug.Log(speakerText.text.ToString());
+            Debug.Log("is speaking");
         }
         else
         {
