@@ -1,0 +1,13 @@
+Selene
+
+Well done making it this far!
+
+A dangerous fungus is spreading.
+
+Perhaps you saw some Mice were infected.
+
+As an Onion, you can slay them by issuing Attack commands.
+
+To reach my next location, you will need to Dash.
+
+Good luck!!
