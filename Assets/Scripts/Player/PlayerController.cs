@@ -352,7 +352,12 @@ public class PlayerController : MonoBehaviour
     public void OnInteract(InputAction.CallbackContext context)
     {
         if (context.started)
-        {   
+        {
+            if (IsDashing || IsLaunching || IsRopeSwinging)
+            {   // Not allowed to interact
+                return;
+            }
+
             if (InDialogueTriggerRange && !inDialogue)  // Starting dialogue
             {
                 Debug.Log("Initiating Dialogue");

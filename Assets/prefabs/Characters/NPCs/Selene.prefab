@@ -181,6 +181,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   textFile: {fileID: 4900000, guid: 2ca63c2325b8904449b9edbbcf498a27, type: 3}
   interactIcon: {fileID: 5615360258385736954}
+  seleneSprite: {fileID: 8388745128535791578}
 --- !u!212 &8388745128535791578
 SpriteRenderer:
   m_ObjectHideFlags: 0
