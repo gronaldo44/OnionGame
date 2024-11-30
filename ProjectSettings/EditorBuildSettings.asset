@@ -17,8 +17,14 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RonaldsToybox.unity
     guid: dd3dd431d12d6a44e890093eab2e89b7
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/JakesSceneArea3.unity
     guid: 5db21eea76e9d3f4e8ce5361e91c61dc
+  - enabled: 1
+    path: Assets/Scenes/GregScene.unity
+    guid: 8dbe654392bf38b4cae0bcdd5d9c5570
+  - enabled: 1
+    path: Assets/Scenes/JakeScene.unity
+    guid: f7f1a73540af0b64dae011aca2654144
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

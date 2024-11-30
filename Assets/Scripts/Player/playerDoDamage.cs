@@ -7,7 +7,7 @@ public class PlayerDoDamage : MonoBehaviour
 
     private GameObject attackArea = default;
     Animator animator;
-    private float timeToAttack = 0.25f;
+    private float timeToAttack = 1.15f;
     private float timer = 0f;
 
     // Start is called before the first frame update
