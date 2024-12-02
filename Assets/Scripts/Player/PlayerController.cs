@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,6 +16,10 @@ public class PlayerController : MonoBehaviour
     Animator animator;
     [SerializeField] public Vector3 spawnLocation = Vector3.zero;
 
+    public TextAsset DialogueTextFile = null;
+    public bool InDialogueTriggerRange = false;
+    private bool inDialogue = false;
+
     public float jumpImpulse = 16f; // Increased for more snappy ascent
     public float jumpCutMultiplier = 0.5f;
 
@@ -24,7 +30,25 @@ public class PlayerController : MonoBehaviour
     public float lowJumpMultiplier = 2.5f;    // Gravity multiplier for short jumps
     public float additionalJumpForce = 1f;    // Optional upward force during ascent
 
-    private bool isJumpPressed = false;        // Tracks if the jump button is held
+    private bool _isJumpPressed = false;        // Tracks if the jump button is held
+    private bool isJumpPressed
+    {
+        get
+        {
+            return _isJumpPressed;
+        }
+        set
+        {
+            _isJumpPressed = value;
+            if (_isJumpPressed)
+            {
+                //Debug.Log("Jump pressed");
+            } else
+            {
+                //Debug.Log("Jump released");
+            }
+        }
+    }
     #endregion
 
     #region Movement params
@@ -82,11 +106,18 @@ public class PlayerController : MonoBehaviour
     private float launchTime = 0.4f;
     public Vector2 launchDir = Vector2.zero;
     [SerializeField]
-    private bool _canLaunch = true;
+    private bool _canLaunch = false;
     public bool CanLaunch
     {
         get => _canLaunch;
-        set => _canLaunch = value;
+        set
+        {
+            _canLaunch = value;
+            if (_canLaunch)
+            {
+                Debug.Log("Can Launch");
+            }
+        }
     }
     [SerializeField]
     private bool _isLaunching;
@@ -96,7 +127,7 @@ public class PlayerController : MonoBehaviour
         set
         {
             _isLaunching = value;
-            animator.SetBool(AnimationStrings.isSwingLunging, value);
+            animator.SetBool(AnimationStrings.isFlowerLaunching, value);
         }
     }
 
@@ -146,7 +177,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        CanLaunch = false;
     }
 
     // Update is called once per frame
@@ -225,11 +256,12 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
+
         // Determine target speed based on input
         float targetSpeed = moveInput.x * moveSpeed;
 
         // Debug input and target speed
-        Debug.Log($"moveInput.x: {moveInput.x}, targetSpeed: {targetSpeed}, currentSpeed: {currentSpeed}");
+        //Debug.Log($"moveInput.x: {moveInput.x}, targetSpeed: {targetSpeed}, currentSpeed: {currentSpeed}");
 
         // Calculate acceleration or deceleration
         if (Mathf.Abs(targetSpeed) > Mathf.Epsilon)
@@ -255,7 +287,7 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector2(currentSpeed, rb.velocity.y);
 
         // Debug applied velocity
-        Debug.Log($"Applied velocity: {rb.velocity}");
+        //Debug.Log($"Applied velocity: {rb.velocity}");
     }
 
     private void AdjustGravity()
@@ -289,10 +321,10 @@ public class PlayerController : MonoBehaviour
 
     private void PerformJump()
     {
+        Debug.Log("Jumping");
         animator.SetTrigger(AnimationStrings.jump);
         rb.AddForce(new Vector2(0, jumpImpulse), ForceMode2D.Impulse); // Apply upward impulse
         coyoteTimeCounter = 0f;
-        isJumpPressed = true;
     }
 
     #region Player inputs and actions
@@ -301,12 +333,41 @@ public class PlayerController : MonoBehaviour
         if (context.started && !IsLaunching && !IsDashing && !DialogueManager.GetInstance().dialogueIsPlaying)
         {
             Debug.Log("Attempting to lasso");
-            hairLassoController.TryAttachLasso(); // Notify HairLassoController to attach the lasso
+            if (hairLassoController.TryAttachLasso())
+            { // Notify HairLassoController to attach the lasso
+                animator.SetBool(AnimationStrings.isRopeSwinging, true);
+            }
         }
         if (context.canceled && IsRopeSwinging)
         {
             Debug.Log("Releasing lasso");
             hairLassoController.ReleaseLasso(); // Notify HairLassoController to release the lasso
+            animator.SetBool(AnimationStrings.isRopeSwinging, false);
+        }
+    }
+
+    /// <summary>
+    /// called when a player issues an interact command
+    /// </summary>
+    /// <param name="context"></param>
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {   
+            if (InDialogueTriggerRange && !inDialogue)  // Starting dialogue
+            {
+                Debug.Log("Initiating Dialogue");
+                DialogueManager.GetInstance().EnterDialogueMode(DialogueTextFile);
+                inDialogue = true; 
+            } else if (InDialogueTriggerRange && inDialogue)
+            {
+                Debug.Log("Continue dialogue");
+                DialogueManager.GetInstance().ContinueDialogue();
+                if (!DialogueManager.GetInstance().dialogueIsPlaying)
+                {
+                    inDialogue = false;
+                }
+            }
         }
     }
 
@@ -316,7 +377,7 @@ public class PlayerController : MonoBehaviour
     /// <param name="context">Move Command</param>
     public void OnMove(InputAction.CallbackContext context)
     {
-        if (DialogueManager.GetInstance().dialogueIsPlaying) { return; } //Don't allow move while dialogue is playing
+        if (inDialogue) { return; } //Don't allow move while dialogue is playing
 
         // Directly set moveInput without smoothing
         moveInput = context.ReadValue<Vector2>();
@@ -351,7 +412,7 @@ public class PlayerController : MonoBehaviour
         if (context.started && CanLaunch && !touchingDirections.IsGrounded && !IsDashing && !IsLaunching && !DialogueManager.GetInstance().dialogueIsPlaying)
         {
             Debug.Log("Flower Launch");
-            animator.SetTrigger(AnimationStrings.swing);    // TODO
+            animator.SetTrigger(AnimationStrings.flowerLaunch);   
             StartCoroutine(FlowerLaunch());
         }
     }
@@ -381,6 +442,7 @@ public class PlayerController : MonoBehaviour
         if (context.started && canDash && !IsLaunching && !IsLaunching && !DialogueManager.GetInstance().dialogueIsPlaying)
         {
             Debug.Log("Dash");
+            IsDashing = true;
             StartCoroutine(Dash());
         }
     }
@@ -392,7 +454,6 @@ public class PlayerController : MonoBehaviour
     private IEnumerator Dash()
     {
         canDash = false;
-        IsDashing = true;
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f;
 
@@ -407,6 +468,7 @@ public class PlayerController : MonoBehaviour
 
         rb.gravityScale = originalGravity;
         IsDashing = false;
+        //Debug.Log("finished dash");
 
         yield return new WaitForSeconds(dashingCD);
         canDash = true;
@@ -424,6 +486,7 @@ public class PlayerController : MonoBehaviour
 
         if (context.started && coyoteTimeCounter > 0)
         {
+            Debug.Log("Jump");
             animator.SetTrigger(AnimationStrings.jump);
             rb.AddForce(new Vector2(0, jumpImpulse), ForceMode2D.Impulse); // Apply upward impulse
             coyoteTimeCounter = 0;

@@ -28,7 +28,7 @@ public class EnemyPatrol : MonoBehaviour
         rb.velocity = direction * speed; // Set velocity
 
         // Check if the enemy is close enough to switch points
-        if (Vector2.Distance(transform.position, currentPoint.position) < 0.5f)
+        if (Vector2.Distance(transform.position, currentPoint.position) < .6f)
         {
             // Switch points
             if (currentPoint == pointA)
