@@ -143,7 +143,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      foxPupStill_0: 2326562809115988690
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
