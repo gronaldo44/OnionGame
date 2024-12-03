@@ -123,12 +123,12 @@ public class SwingController : MonoBehaviour
     {
         Vector3 wiltedScale = new Vector3(originalScale.x * 0.8f, originalScale.y * 0.6f, originalScale.z); // Compressed
         Vector3 wiltedPosition = originalPosition - transform.right * 0.6f; // Pulled back
-        activeFlowerTransition = StartCoroutine(SmoothTransform(flower, wiltedScale, wiltedPosition, 0.1f));
+        activeFlowerTransition = StartCoroutine(SmoothTransform(flower, wiltedScale, wiltedPosition, 0.3f));
     }
 
     private void UnwiltFlower()
     {
-        activeFlowerTransition = StartCoroutine(SmoothTransform(flower, originalScale, originalPosition, 0.2f));
+        activeFlowerTransition = StartCoroutine(SmoothTransform(flower, originalScale, originalPosition, 0.3f));
     }
 
     private void LaunchFlower()

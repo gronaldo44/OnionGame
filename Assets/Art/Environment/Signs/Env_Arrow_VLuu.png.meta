@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 53a64d40c432f184a897e067f9cf6fa4
+guid: e1dbf26ffde66844bad72b480b4b51c3
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8248327718669187116
-    second: frame_03_delay-0.04s_0
+      213: -5716846275882460955
+    second: Env_Arrow_VLuu_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,30 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Windows Store Apps
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: frame_03_delay-0.04s_0
+      name: Env_Arrow_VLuu_0
       rect:
         serializedVersion: 2
-        x: 59
-        y: 14
-        width: 201
-        height: 563
+        x: 52
+        y: 211
+        width: 318
+        height: 138
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -127,8 +114,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4d707b134ad088d80800000000000000
-      internalID: -8248327718669187116
+      spriteID: 5e8d28ae99ea9a0b0800000000000000
+      internalID: -5716846275882460955
       vertices: []
       indices: 
       edges: []
@@ -143,8 +130,7 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      frame_03_delay-0.04s_0: -8248327718669187116
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

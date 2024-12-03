@@ -11,7 +11,7 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Signs
   - Water
   - UI
   - 
@@ -47,8 +47,14 @@ TagManager:
   - name: Tiles_Background
     uniqueID: 761137777
     locked: 0
+  - name: Environment_BG
+    uniqueID: 1985513853
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Environment_FG
+    uniqueID: 3854898469
     locked: 0
   - name: Tiles_Foreground
     uniqueID: 3596133643
