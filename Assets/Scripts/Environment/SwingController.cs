@@ -8,6 +8,10 @@ using UnityEngine;
 /// </summary>
 public class SwingController : MonoBehaviour
 {
+    private Vector3 originalScale;
+    private Vector3 originalPosition;
+    private SpriteRenderer flower;
+    private Coroutine activeFlowerTransition;
     GameObject ring;
     [SerializeField] private bool _isRopeSwing;
     public bool IsRopeSwing
@@ -33,9 +37,17 @@ public class SwingController : MonoBehaviour
         playerController = player.GetComponent<PlayerController>();
         hairLassoController = playerController.hairLassoController;
 
-        ring = transform.Find("RING_0").gameObject;
-        SpriteRenderer ringSprite = ring.GetComponent<SpriteRenderer>();
-        ringSprite.color = new Color(ringSprite.color.r, ringSprite.color.g, ringSprite.color.b, 0);
+        if (IsRopeSwing)
+        {
+            ring = transform.Find("RING_0").gameObject;
+            SpriteRenderer ringSprite = ring.GetComponent<SpriteRenderer>();
+            ringSprite.color = new Color(ringSprite.color.r, ringSprite.color.g, ringSprite.color.b, 0);
+        } else
+        {
+            flower = GetComponent<SpriteRenderer>();
+            originalScale = flower.transform.localScale;
+            originalPosition = flower.transform.localPosition;
+        }
     }
 
     /// <summary>
@@ -49,6 +61,16 @@ public class SwingController : MonoBehaviour
             Debug.Log("Can FlowerLaunch");
             playerController.CanLaunch = true;
             playerController.launchDir = transform.right;
+            playerController.Event_OnFlowerLaunch += LaunchFlower;
+
+            // Slow player fall
+            Rigidbody2D playerRigidbody = player.GetComponent<Rigidbody2D>();
+            if (playerRigidbody != null && playerRigidbody.velocity.y < 0) // Only slow if falling
+            {
+                playerRigidbody.velocity = new Vector2(playerRigidbody.velocity.x, playerRigidbody.velocity.y * 0.5f);
+            }
+
+            WiltFlower();
         }
         else if (collision.TryGetComponent<HairLassoController>(out var lasso) && _isRopeSwing)
         {
@@ -71,6 +93,9 @@ public class SwingController : MonoBehaviour
             Debug.Log("Can't FlowerLaunch");
             playerController.CanLaunch = false;
             playerController.launchDir = Vector2.zero;
+            playerController.Event_OnFlowerLaunch -= LaunchFlower;
+
+            UnwiltFlower();
         }
         else if (collision.TryGetComponent<HairLassoController>(out var lasso) && _isRopeSwing)
         {
@@ -94,12 +119,63 @@ public class SwingController : MonoBehaviour
         }
     }
 
-    public void FadeIn(float duration)
+    private void WiltFlower()
+    {
+        Vector3 wiltedScale = new Vector3(originalScale.x * 0.8f, originalScale.y * 0.6f, originalScale.z); // Compressed
+        Vector3 wiltedPosition = originalPosition - transform.right * 0.6f; // Pulled back
+        activeFlowerTransition = StartCoroutine(SmoothTransform(flower, wiltedScale, wiltedPosition, 0.1f));
+    }
+
+    private void UnwiltFlower()
+    {
+        activeFlowerTransition = StartCoroutine(SmoothTransform(flower, originalScale, originalPosition, 0.2f));
+    }
+
+    private void LaunchFlower()
+    {
+        Debug.Log("Launch Flower Sprite");
+        if (activeFlowerTransition != null)
+        {
+            StopCoroutine(activeFlowerTransition);
+            activeFlowerTransition = null;
+        }
+
+        Vector3 targetPosition = originalPosition + (transform.right * 2f);
+        activeFlowerTransition = StartCoroutine(SmoothTransform(flower, originalScale, targetPosition, 0.15f));
+    }
+
+    private IEnumerator SmoothTransform(SpriteRenderer sprite, Vector3 targetScale, Vector3 targetPosition, float duration)
+    {
+        Vector3 startScale = sprite.transform.localScale;
+        Vector3 startPosition = sprite.transform.localPosition;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / duration;
+
+            // Smoothly interpolate scale and position
+            sprite.transform.localScale = Vector3.Lerp(startScale, targetScale, t);
+            sprite.transform.localPosition = Vector3.Lerp(startPosition, targetPosition, t);
+
+            yield return null; // Wait for the next frame
+        }
+
+        // Ensure final values are precisely set
+        sprite.transform.localScale = targetScale;
+        sprite.transform.localPosition = targetPosition;
+
+        activeFlowerTransition = null;
+    }
+
+
+    private void FadeIn(float duration)
     {
         StartCoroutine(Fade(0, 1, duration)); // From transparent (0) to opaque (1)
     }
 
-    public void FadeOut(float duration)
+    private void FadeOut(float duration)
     {
         StartCoroutine(Fade(1, 0, duration)); // From opaque (1) to transparent (0)
     }

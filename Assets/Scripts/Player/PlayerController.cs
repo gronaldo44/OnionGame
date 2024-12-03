@@ -102,7 +102,8 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Swingables params
-    private float launchPower = 18f;
+    public event Action Event_OnFlowerLaunch;
+    private float launchPower = 20f;
     private float launchTime = 0.4f;
     public Vector2 launchDir = Vector2.zero;
     [SerializeField]
@@ -327,6 +328,24 @@ public class PlayerController : MonoBehaviour
     }
 
     #region Player inputs and actions
+    public void OnUnpause(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            Debug.Log("Unpause");
+            PauseManager.instance.Unpause();
+        }
+    }
+
+    public void OnPause(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            Debug.Log("Pause");
+            PauseManager.instance.Pause();
+        }
+    }
+
     public void OnLasso(InputAction.CallbackContext context)
     {
         if (context.started && !IsLaunching && !IsDashing && !DialogueManager.GetInstance().dialogueIsPlaying)
@@ -416,6 +435,7 @@ public class PlayerController : MonoBehaviour
         if (context.started && CanLaunch && !touchingDirections.IsGrounded && !IsDashing && !IsLaunching && !DialogueManager.GetInstance().dialogueIsPlaying)
         {
             Debug.Log("Flower Launch");
+            Event_OnFlowerLaunch?.Invoke();
             animator.SetTrigger(AnimationStrings.flowerLaunch);   
             StartCoroutine(FlowerLaunch());
         }

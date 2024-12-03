@@ -156,7 +156,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      BG_tutorial_VLuu_0: 752220231940678321
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
