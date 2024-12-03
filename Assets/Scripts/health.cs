@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 public class health : MonoBehaviour
@@ -55,14 +54,13 @@ public class health : MonoBehaviour
     public void DamageTaken(float damage)
     {
         Debug.Log(gameObject.name + " Took Damage: " + damage);
-        if (animator != null)
-        {
+        if(animator != null) { 
             animator.SetTrigger(damageTaken);
         }
         CurrentHealth -= damage;
+        //animator.
         Debug.Log("Health: " + CurrentHealth + "/" + startingHealth);
     }
-
 
     // TODO
     private void HandleDeath()
