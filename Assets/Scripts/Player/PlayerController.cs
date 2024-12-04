@@ -160,6 +160,12 @@ public class PlayerController : MonoBehaviour
     public float jumpBufferTime = 0.1f;
     private float jumpBufferCounter;
     #endregion
+
+    #region Bouncing Params
+    bool isBouncing = false;
+    float bounceForce = 30f;
+    float bounceTime = 0.1f;
+    #endregion
     #endregion
 
     // Called when the controller is created
@@ -216,7 +222,7 @@ public class PlayerController : MonoBehaviour
     // Called on the Fixed Timestep in Unity making it ideal for physics calculations
     private void FixedUpdate()
     {
-        if (IsDashing || IsLaunching)    // a coroutine is setting physics 
+        if (IsDashing || IsLaunching || isBouncing)    // a coroutine is setting physics 
         {
             return;
         }
@@ -317,7 +323,26 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void Bounce(Vector2 direction)
+    {
+        Debug.Log("Bounce");
+        isBouncing = true;
+        StartCoroutine(OnBounce(direction));
+    }
 
+    private IEnumerator OnBounce(Vector2 direction)
+    {
+        isBouncing = true;
+        float originalGravity = rb.gravityScale;
+        rb.gravityScale = 0f;
+
+        direction.y += 0.25f;
+        rb.velocity = direction * bounceForce;
+        yield return new WaitForSeconds(bounceTime);
+
+        rb.gravityScale = originalGravity;
+        isBouncing = false;
+    }
 
     private void PerformJump()
     {

@@ -2,34 +2,28 @@ using UnityEngine;
 
 public class EnemyAttackArea : MonoBehaviour
 {
-    private int dmg = 1;
-    private float cooldown = 0.05f;
-    private float lastTriggerTime = 0f;
+    [SerializeField] public int dmg = 1;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (Time.time - lastTriggerTime > cooldown)
+        if (collision.TryGetComponent<PlayerController>(out var player))
         {
-            //handle kb
-            Rigidbody2D playerRb = collision.GetComponent<Rigidbody2D>();
-            if (playerRb != null)
+            Debug.Log("EnemyAttackArea collided with Player");
+
+            Rigidbody2D enemyRb = transform.parent.gameObject.GetComponent<Rigidbody2D>();
+            Rigidbody2D playerRb = player.GetComponent<Rigidbody2D>();
+
+            // bounce player away from enemy
+            float xDirection = playerRb.position.x - enemyRb.position.x;
+            if (xDirection < 0)
             {
-                Vector2 kbDirection;
-
-                //knock left
-                if (collision.transform.position.x > transform.position.x)
-                {
-                    kbDirection = new Vector2(75f, 10f);
-                }
-                else //knock right
-                {
-                    kbDirection = new Vector2(-75f, 10f);
-                }
-
-                playerRb.AddForce(kbDirection, ForceMode2D.Impulse);
+                player.Bounce(Vector2.left);
             }
-
-            lastTriggerTime = Time.time;
+            else
+            {
+                // bounce right
+                player.Bounce(Vector2.right);
+            }
 
             //handle damage
             if (collision.GetComponent<PlayerDoDamage>() != null)

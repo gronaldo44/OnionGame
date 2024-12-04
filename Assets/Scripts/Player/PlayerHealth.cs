@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -5,6 +6,7 @@ public class PlayerHealth : MonoBehaviour
 {
     public float maxHealth = 50f;
     private Animator animator;
+    private bool canTakeDamage = true;
     [SerializeField] private float _currHealth;
     public float CurrentHealth
     {
@@ -27,6 +29,8 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
+        if (!canTakeDamage) { return; }
+
         animator.SetTrigger(damageTaken);
         if (isDead) return; // No damage if the player is already dead
 
@@ -40,6 +44,14 @@ public class PlayerHealth : MonoBehaviour
         {
             Die();
         }
+        StartCoroutine(Invulnerable(2f));
+    }
+
+    private IEnumerator Invulnerable(float duration)
+    {
+        canTakeDamage = false;
+        yield return new WaitForSeconds(duration);
+        canTakeDamage = true;
     }
 
     public void Heal(float healAmount)
