@@ -29,4 +29,9 @@ public class EndScreenManager : MonoBehaviour
         Application.Quit();
 #endif
     }
+
+    public void OnMainMenu()
+    {
+        GameManager.Instance.ChangeScene("Main Menu");
+    }
 }

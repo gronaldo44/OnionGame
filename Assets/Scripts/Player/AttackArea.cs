@@ -15,17 +15,21 @@ public class AttackArea : MonoBehaviour
             PlayerController player = GameManager.Instance.GetCurrentPlayer().GetComponent<PlayerController>();
             Rigidbody2D playerRb = player.GetComponent<Rigidbody2D>();
 
-            // bounce player away from enemy
-            float xDirection = playerRb.position.x - enemyRb.position.x;
-            if (xDirection < 0)
+            if (enemyPatrol != null)
             {
-                player.Bounce(Vector2.left);
-                enemyPatrol.Bounce(Vector2.right);
-            } else
-            {
-                // bounce right
-                player.Bounce(Vector2.right);
-                enemyPatrol.Bounce(Vector2.left);
+                // bounce player away from enemy
+                float xDirection = playerRb.position.x - enemyRb.position.x;
+                if (xDirection < 0)
+                {
+                    player.Bounce(Vector2.left);
+                    enemyPatrol.Bounce(Vector2.right);
+                }
+                else
+                {
+                    // bounce right
+                    player.Bounce(Vector2.right);
+                    enemyPatrol.Bounce(Vector2.left);
+                }
             }
 
             // handle damage
