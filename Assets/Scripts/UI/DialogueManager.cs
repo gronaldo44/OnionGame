@@ -23,6 +23,8 @@ public class DialogueManager : MonoBehaviour
             Debug.LogWarning("More than one DialogueManager");
         }
 
+        dialoguePanel.SetActive(false);
+
         instance = this;
         linesOfDialogue = new string[0];
         dialogueIndex = 0;
