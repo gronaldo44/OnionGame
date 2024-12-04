@@ -18,6 +18,7 @@ public class endScreenTrigger : MonoBehaviour
             GameManager.Instance.ChangeScene(sceneDestination);
         }
 
+ 
     }
 
 }

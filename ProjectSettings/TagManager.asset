@@ -44,6 +44,9 @@ TagManager:
   - name: background
     uniqueID: 1713407947
     locked: 0
+  - name: sign_layer
+    uniqueID: 839472815
+    locked: 0
   - name: Tiles_Background
     uniqueID: 761137777
     locked: 0
