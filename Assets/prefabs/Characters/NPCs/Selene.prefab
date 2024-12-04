@@ -75,12 +75,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 170541344392851841, guid: 82b22c68418ef574aafd35a56c0d30fd, type: 3}
+  m_Sprite: {fileID: -980027206470483382, guid: 573c224374c656e43af74465d31004ed, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.69, y: 0.74}
+  m_Size: {x: 1.06, y: 1.09}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -98,6 +98,7 @@ GameObject:
   - component: {fileID: 3768109757979706291}
   - component: {fileID: 3767278126838807050}
   - component: {fileID: 8388745128535791578}
+  - component: {fileID: 7680600168487112586}
   m_Layer: 0
   m_Name: Selene
   m_TagString: Untagged
@@ -179,7 +180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fa5303e25b308545abc0afd9174039b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textFile: {fileID: 4900000, guid: 2ca63c2325b8904449b9edbbcf498a27, type: 3}
+  textFile: {fileID: 4900000, guid: 988111f8e197cc94c97813f5adc81873, type: 3}
   interactIcon: {fileID: 5615360258385736954}
   seleneSprite: {fileID: 8388745128535791578}
 --- !u!212 &8388745128535791578
@@ -236,3 +237,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &7680600168487112586
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7943326251305166464}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 791c5f57a65f8994c996d39235c85069, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
