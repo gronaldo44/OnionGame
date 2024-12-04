@@ -57,6 +57,7 @@ public class GameManager : MonoBehaviour
         else
         {
             // Spawn player and set up the environment with default conditions
+            UIManager.Instance.setOnions();
             SpawnPlayer(new PlayerData());
             SpawnSwingables();
             SpawnEnemies();
@@ -72,6 +73,8 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator LoadSceneAndGame(string sceneName)
     {
+
+
         // Load the new scene asynchronously
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
 
@@ -146,6 +149,7 @@ public class GameManager : MonoBehaviour
         SpawnPlayer(gameData.player);
         LoadSwingables(gameData.swingables);
         LoadEnemies(gameData.enemies);
+        UIManager.Instance.setOnions();
     }
 
     private void LoadSwingables(List<SwingableData> swingables)

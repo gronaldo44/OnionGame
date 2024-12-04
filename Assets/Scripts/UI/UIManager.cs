@@ -6,15 +6,20 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    public static UIManager Instance;
     // UI Elements
-    [SerializeField] private Image onionHealth_1;
-    [SerializeField] private Image onionHealth_2;
-    [SerializeField] private Image onionHealth_3;
+    private Image onionHealth_1;
+    private Image onionHealth_2;
+    private Image onionHealth_3;
 
     private PlayerHealth playerHealth;
 
     void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
         onionHealth_3.gameObject.SetActive(true);
         onionHealth_2.gameObject.SetActive(false);
         onionHealth_1.gameObject.SetActive(false);
@@ -34,9 +39,27 @@ public class UIManager : MonoBehaviour
     {
     }
 
+    public void setOnions()
+    {
+        onionHealth_1 = GameObject.Find("OnionHealth_1").GetComponent<Image>();
+        onionHealth_2 = GameObject.Find("OnionHealth_2").GetComponent<Image>();
+        onionHealth_3 = GameObject.Find("OnionHealth_3").GetComponent<Image>();
+        if (onionHealth_1 != null && onionHealth_2 != null && onionHealth_3 != null)
+        {
+            onionHealth_3.gameObject.SetActive(true);
+            onionHealth_2.gameObject.SetActive(false);
+            onionHealth_1.gameObject.SetActive(false);
+
+        }
+        else
+        {
+            Debug.LogWarning("OnionHealthImage not assigned");
+        }
+    }
+
     private void UpdateHealthBar(float newHealth)
     {
-        if (onionHealth_1 == null || onionHealth_2 == null || onionHealth_3 == null )
+        if (onionHealth_1 == null || onionHealth_2 == null || onionHealth_3 == null)
         {
             Debug.LogError("OnionHealthImage not assigned in prefab");
             return;

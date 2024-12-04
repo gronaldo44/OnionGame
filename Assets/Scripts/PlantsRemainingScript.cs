@@ -15,6 +15,6 @@ public class PlantsRemainingScript : MonoBehaviour
 
     void Update()
     {
-        remainingPlants.text = "Plants Remaining: " + GameObject.FindGameObjectsWithTag("DestroyablePlant").Length;
+        remainingPlants.text = "Corpse Flowers Remaining: " + GameObject.FindGameObjectsWithTag("DestroyablePlant").Length;
     }
 }
