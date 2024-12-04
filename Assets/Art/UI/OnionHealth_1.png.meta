@@ -1,10 +1,16 @@
 fileFormatVersion: 2
-guid: 53a64d40c432f184a897e067f9cf6fa4
+guid: c238d15ed55c8144293504d57362bbc1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8248327718669187116
-    second: frame_03_delay-0.04s_0
+      213: -5795065738338039862
+    second: OnionHealth_1_0
+  - first:
+      213: -3179411949847984426
+    second: OnionHealth_1_1
+  - first:
+      213: -8408741154672301139
+    second: OnionHealth_1_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,30 +102,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Windows Store Apps
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: frame_03_delay-0.04s_0
+      name: OnionHealth_1_0
       rect:
         serializedVersion: 2
-        x: 59
-        y: 14
-        width: 201
-        height: 563
+        x: 87
+        y: 53
+        width: 319
+        height: 369
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -127,8 +120,50 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4d707b134ad088d80800000000000000
-      internalID: -8248327718669187116
+      spriteID: ac703502a6ac39fa0800000000000000
+      internalID: -5795065738338039862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: OnionHealth_1_1
+      rect:
+        serializedVersion: 2
+        x: 235
+        y: 28
+        width: 8
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d6cda64da570e3d0800000000000000
+      internalID: -3179411949847984426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: OnionHealth_1_2
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 39
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dabac83a8762e4b80800000000000000
+      internalID: -8408741154672301139
       vertices: []
       indices: 
       edges: []
@@ -143,8 +178,7 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      frame_03_delay-0.04s_0: -8248327718669187116
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
