@@ -178,7 +178,10 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      OnionHealth_1_0: -5795065738338039862
+      OnionHealth_1_1: -3179411949847984426
+      OnionHealth_1_2: -8408741154672301139
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

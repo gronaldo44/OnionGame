@@ -50,6 +50,7 @@ MonoBehaviour:
   mousePrefab: {fileID: 3264726093162775524, guid: 90c2708f58a99b7408b176027feb981b, type: 3}
   cameraManager: {fileID: 0}
   uiManager: {fileID: 9116273477692540184}
+  dialogueManager: {fileID: 0}
 --- !u!114 &9116273477692540184
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,4 +63,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d33e5e62b01fe664b832c89e38ff9470, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthBar: {fileID: 0}
+  onionHealth_1: {fileID: 0}
+  onionHealth_2: {fileID: 0}
+  onionHealth_3: {fileID: 0}
