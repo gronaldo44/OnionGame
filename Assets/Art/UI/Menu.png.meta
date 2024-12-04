@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: c8df59b519baa6b45850ad21b41c0fbf
+guid: aa6f7ae3db5249c4aa3fcf4a70748688
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6105303565940273148
-    second: UI_PauseScreen_VLuu_0
+      213: -198938125430884413
+    second: Menu_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: UI_PauseScreen_VLuu_0
+      name: Menu_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 1920
-        height: 1080
+        y: 27
+        width: 633
+        height: 170
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -127,8 +127,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cffabc5fe356ab450800000000000000
-      internalID: 6105303565940273148
+      spriteID: 3c7f86534da3d3df0800000000000000
+      internalID: -198938125430884413
       vertices: []
       indices: 
       edges: []
@@ -144,7 +144,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      UI_PauseScreen_VLuu_0: 6105303565940273148
+      Menu_0: -198938125430884413
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
