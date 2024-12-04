@@ -7,17 +7,13 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     // UI Elements
-    [SerializeField] private Image onionHealth_1;
-    [SerializeField] private Image onionHealth_2;
-    [SerializeField] private Image onionHealth_3;
+    [SerializeField] private Slider healthBar;
 
     private PlayerHealth playerHealth;
 
-    void Awake()
+    void Start()
     {
-        onionHealth_3.gameObject.SetActive(true);
-        onionHealth_2.gameObject.SetActive(false);
-        onionHealth_1.gameObject.SetActive(false);
+
     }
 
     private void OnDestroy()
@@ -36,29 +32,13 @@ public class UIManager : MonoBehaviour
 
     private void UpdateHealthBar(float newHealth)
     {
-        if (onionHealth_1 == null || onionHealth_2 == null || onionHealth_3 == null )
+        if (healthBar == null)
         {
-            Debug.LogError("OnionHealthImage not assigned in prefab");
+            Debug.LogError("HealthBar is not assigned in the UIManager.");
             return;
         }
 
-        if (newHealth == 3)
-        {
-            onionHealth_3.gameObject.SetActive(true);
-            onionHealth_2.gameObject.SetActive(false);
-            onionHealth_1.gameObject.SetActive(false);
-        } else if (newHealth == 2)
-        {
-            onionHealth_3.gameObject.SetActive(false);
-            onionHealth_2.gameObject.SetActive(true);
-            onionHealth_1.gameObject.SetActive(false);
-        } else
-        {
-            onionHealth_3.gameObject.SetActive(false);
-            onionHealth_2.gameObject.SetActive(false);
-            onionHealth_1.gameObject.SetActive(true);
-        }
-
+        healthBar.value = newHealth;
         Debug.Log("Health bar updated: " + newHealth);
     }
 
@@ -70,6 +50,17 @@ public class UIManager : MonoBehaviour
 
     public void UpdatePlayerReference(GameObject newPlayer)
     {
+        // Set the healthBar dynamically at runtime, if not already set
+        if (healthBar == null)
+        {
+            healthBar = GameObject.Find(SceneStrings.healthSlider).GetComponent<Slider>();
+            if (healthBar == null)
+            {
+                Debug.LogError("HealthBar slider not found in scene: " + SceneManager.GetActiveScene().name);
+                return; // Prevent further execution if healthBar is missing
+            }
+        }
+
         Debug.Log("Update UI Player Reference: " + newPlayer.gameObject.name);
         // Unsubscribe from the previous player if necessary
         if (playerHealth != null)

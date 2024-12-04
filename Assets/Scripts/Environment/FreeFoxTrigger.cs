@@ -1,17 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 public class FreeFoxTrigger : MonoBehaviour
 {
-    [SerializeField] private TextAsset newFile;
+    //[SerializeField] private string sceneDestination;
 
     void Update()
     {
         if (GameObject.FindGameObjectsWithTag("DestroyablePlant").Length == 0)
         {
-            GameObject.Find("Selene").GetComponent<DialogueTrigger>().textFile = newFile;
             Destroy(GameObject.Find("cage"));
         }
     }

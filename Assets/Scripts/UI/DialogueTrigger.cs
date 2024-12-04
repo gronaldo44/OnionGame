@@ -10,7 +10,7 @@ public class DialogueTrigger : MonoBehaviour
     private bool isFirstTrigger = true;
     private PlayerController playerController;
 
-    [SerializeField] public TextAsset textFile;
+    [SerializeField] private TextAsset textFile;
     [SerializeField] private GameObject interactIcon;
     [SerializeField] private SpriteRenderer seleneSprite;
 
