@@ -130,7 +130,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Env_SignPost_VLuu_0: -3475499725731709786
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -130,7 +130,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      UI_PauseScreen_VLuu_0: 6105303565940273148
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
