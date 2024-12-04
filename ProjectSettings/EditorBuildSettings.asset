@@ -26,5 +26,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/JakeScene.unity
     guid: f7f1a73540af0b64dae011aca2654144
+  - enabled: 1
+    path: Assets/Scenes/EndScreen.unity
+    guid: df099792477dd514eb7b48819c3efd27
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
