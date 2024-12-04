@@ -43,8 +43,7 @@ public class PlayerController : MonoBehaviour
             if (_isJumpPressed)
             {
                 //Debug.Log("Jump pressed");
-            }
-            else
+            } else
             {
                 //Debug.Log("Jump released");
             }
@@ -53,7 +52,6 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Movement params
-
     public float moveSpeed = 10f;
     public float acceleration = 50f; // Increased for snappier movement
     public float deceleration = 50f; // Increased for snappier movement
@@ -78,7 +76,6 @@ public class PlayerController : MonoBehaviour
         {
             if (_isFacingRight != value)
             {
-                currentSpeed = 0f;
                 transform.localScale *= new Vector2(-1, 1); // Flip along x-axis
             }
             _isFacingRight = value;
@@ -320,12 +317,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void DamageBounce()
-    {
-        Debug.Log("Damage Bounce");
-        float bounceDirection = IsFacingRight ? -1f : 1f;
-        currentSpeed = bounceDirection * moveSpeed;
-    }
+
 
     private void PerformJump()
     {
@@ -387,15 +379,10 @@ public class PlayerController : MonoBehaviour
 
             if (InDialogueTriggerRange && !inDialogue)  // Starting dialogue
             {
-                moveInput = Vector2.zero;
-                currentSpeed = 0;
-                animator.SetBool(AnimationStrings.isMoving, false);
-
                 Debug.Log("Initiating Dialogue");
                 DialogueManager.GetInstance().EnterDialogueMode(DialogueTextFile);
-                inDialogue = true;
-            }
-            else if (InDialogueTriggerRange && inDialogue)
+                inDialogue = true; 
+            } else if (InDialogueTriggerRange && inDialogue)
             {
                 Debug.Log("Continue dialogue");
                 DialogueManager.GetInstance().ContinueDialogue();
@@ -449,7 +436,7 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Flower Launch");
             Event_OnFlowerLaunch?.Invoke();
-            animator.SetTrigger(AnimationStrings.flowerLaunch);
+            animator.SetTrigger(AnimationStrings.flowerLaunch);   
             StartCoroutine(FlowerLaunch());
         }
     }

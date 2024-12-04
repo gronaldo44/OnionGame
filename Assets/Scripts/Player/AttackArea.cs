@@ -6,10 +6,10 @@ public class AttackArea : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent<health>(out var health))
+        if (collision.GetComponent<health>() != null)
         {
-            health.DamageTaken(dmg);
-            GameManager.Instance.GetCurrentPlayer().GetComponent<PlayerController>().DamageBounce();
+            health h = collision.GetComponent<health>();
+            h.DamageTaken(dmg);
         }
     }
 }
