@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class HairLassoController : MonoBehaviour
 {
@@ -42,19 +43,22 @@ public class HairLassoController : MonoBehaviour
 
     private void UpdatePlayerRotation()
     {
-        if (currentSwingable != null)
+        // Calculate the direction from the player to the swingable object
+        Vector2 direction = (currentSwingable.transform.position - playerRb.transform.position).normalized;
+
+        // Calculate the target angle to rotate towards
+        float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90;
+
+        // Calculate the difference in angles between the current and target rotation
+        float angleDifference = Quaternion.Angle(playerRb.transform.rotation, Quaternion.Euler(0, 0, targetAngle));
+
+        // Check if the angle difference is larger than a threshold (e.g., 45 degrees)
+        if (angleDifference > 45f) // angle threshold for rotating
         {
-            Vector2 direction = (currentSwingable.transform.position - playerRb.transform.position).normalized;
-
-            float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90;
-
-            float angleDifference = Quaternion.Angle(playerRb.transform.rotation, Quaternion.Euler(0, 0, targetAngle));
-            if (angleDifference > 45f) // angle threshold for rotating
-            {
-                Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
-                float rotationSpeed = 5f;
-                playerRb.transform.rotation = Quaternion.Lerp(playerRb.transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
-            }
+            Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
+            float rotationSpeed = 5f;
+            // Smoothly rotate the player towards the target angle
+            playerRb.transform.rotation = Quaternion.Lerp(playerRb.transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
         }
     }
 
@@ -91,8 +95,18 @@ public class HairLassoController : MonoBehaviour
             // Set the connected anchor point on the swingable object to its center
             distanceJoint.connectedAnchor = swingableRb.transform.InverseTransformPoint(swingableRb.transform.position);
 
+            // Enable the lasso visual
+            lineRenderer.enabled = true;
+            isLassoActive = true;
+
             // Set the distance of the joint to the length of the rope
             float ropeLength = Vector2.Distance(playerRb.transform.position, currentSwingable.transform.position);
+            if (ropeLength < 2f)
+            {
+                StartCoroutine(CallOnLassoDelayed());
+                return false;
+            }
+            playerController.AnchorHeightBuffer = MapRopeLengthToHeightBuffer(ropeLength);
             distanceJoint.distance = ropeLength;
 
             // Allow some flexibility by enabling limits if necessary
@@ -100,10 +114,6 @@ public class HairLassoController : MonoBehaviour
 
             // Enable the DistanceJoint2D
             distanceJoint.enabled = true;
-
-            // Enable the lasso visual
-            lineRenderer.enabled = true;
-            isLassoActive = true;
 
             // Set player to rope swinging state
             playerController.IsRopeSwinging = true;
@@ -114,9 +124,40 @@ public class HairLassoController : MonoBehaviour
             // Optional: Apply an initial impulse to get the swing started
             playerRb.AddForce(Vector2.right * 5f, ForceMode2D.Impulse);  // Adjust force as needed for initial motion
 
+            playerController.LassoAnchor = swingableRb.transform.position;
             return true;
         }
         return false;
+    }
+
+    private IEnumerator CallOnLassoDelayed()
+    {
+        yield return new WaitForSeconds(0.1f);
+        if (!playerController.IsRopeSwinging)
+        {
+
+            if (TryAttachLasso())
+            {
+                playerController.animator.SetBool(AnimationStrings.isRopeSwinging, true);
+            }
+        }
+    }
+
+    private float MapRopeLengthToHeightBuffer(float ropeLength)
+    {
+        // Define the input and output ranges
+        float inputMin = 2f;
+        float inputMax = 6f;
+        float outputMin = 0.2f;
+        float outputMax = 1.75f;
+
+        // Clamp the rope length to be between the input range
+        ropeLength = Mathf.Clamp(ropeLength, inputMin, inputMax);
+
+        // Linear interpolation (lerp) to map the input range to the output range
+        float mappedValue = outputMin + ((ropeLength - inputMin) / (inputMax - inputMin)) * (outputMax - outputMin);
+
+        return mappedValue;
     }
 
     public void ReleaseLasso()

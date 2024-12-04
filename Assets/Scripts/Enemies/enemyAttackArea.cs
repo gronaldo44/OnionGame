@@ -10,6 +10,8 @@ public class EnemyAttackArea : MonoBehaviour
         {
             Debug.Log("EnemyAttackArea collided with Player");
 
+            PlayerHealth hp = player.GetComponent<PlayerHealth>();
+            if (!hp.CanTakeDamage) { return; }
             Rigidbody2D enemyRb = transform.parent.gameObject.GetComponent<Rigidbody2D>();
             Rigidbody2D playerRb = player.GetComponent<Rigidbody2D>();
 
@@ -26,11 +28,7 @@ public class EnemyAttackArea : MonoBehaviour
             }
 
             //handle damage
-            if (collision.GetComponent<PlayerDoDamage>() != null)
-            {
-                PlayerHealth h = collision.GetComponent<PlayerHealth>();
-                h.TakeDamage(dmg);
-            }
+            hp.TakeDamage(dmg);
         }
     }
 }

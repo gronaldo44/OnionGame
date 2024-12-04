@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,7 +14,7 @@ public class PlayerController : MonoBehaviour
     #region Class params
     public Rigidbody2D rb;     // Player body
     TouchingDirections touchingDirections;  // What the player's body is touching
-    Animator animator;
+    public Animator animator;
     [SerializeField] public Vector3 spawnLocation = Vector3.zero;
 
     public TextAsset DialogueTextFile = null;
@@ -43,7 +44,8 @@ public class PlayerController : MonoBehaviour
             if (_isJumpPressed)
             {
                 //Debug.Log("Jump pressed");
-            } else
+            }
+            else
             {
                 //Debug.Log("Jump released");
             }
@@ -76,6 +78,7 @@ public class PlayerController : MonoBehaviour
         {
             if (_isFacingRight != value)
             {
+                currentSpeed = 0;
                 transform.localScale *= new Vector2(-1, 1); // Flip along x-axis
             }
             _isFacingRight = value;
@@ -85,6 +88,7 @@ public class PlayerController : MonoBehaviour
 
     #region Dash params
     private bool canDash = true;
+    private bool reverseDash = false;
     public float dashingPower = 24f;
     public float dashingTime = 0.2f;
     public float dashingCD = 0.5f;
@@ -133,7 +137,9 @@ public class PlayerController : MonoBehaviour
     }
 
     public HairLassoController hairLassoController;
+    public float AnchorHeightBuffer = 0;    // tmp value changed by HairLassoController
     [SerializeField]
+    public Vector3 LassoAnchor = Vector3.zero;   // tmp value changed by HairLassoController
     private bool _canRopeSwing;
     public bool CanRopeSwing
     {
@@ -148,6 +154,10 @@ public class PlayerController : MonoBehaviour
         set
         {
             _isRopeSwinging = value;
+            if (!_isRopeSwinging)
+            {
+                reverseDash = false;
+            }
             animator.SetBool(AnimationStrings.isRopeSwinging, value);
         }
     }
@@ -230,6 +240,8 @@ public class PlayerController : MonoBehaviour
         // Handle swinging
         if (IsRopeSwinging)
         {
+            reverseDash = rb.position.y > LassoAnchor.y;
+
             rb.gravityScale = normalGravityScale * 1.5f; // Use normal gravity during swinging
             float torqueAmount = 50f;
 
@@ -401,13 +413,18 @@ public class PlayerController : MonoBehaviour
             {   // Not allowed to interact
                 return;
             }
+            rb.velocity = Vector2.zero;
+            currentSpeed = 0;
+            moveInput = Vector2.zero;
+            animator.SetBool(AnimationStrings.isMoving, false);
 
             if (InDialogueTriggerRange && !inDialogue)  // Starting dialogue
             {
                 Debug.Log("Initiating Dialogue");
                 DialogueManager.GetInstance().EnterDialogueMode(DialogueTextFile);
-                inDialogue = true; 
-            } else if (InDialogueTriggerRange && inDialogue)
+                inDialogue = true;
+            }
+            else if (InDialogueTriggerRange && inDialogue)
             {
                 Debug.Log("Continue dialogue");
                 DialogueManager.GetInstance().ContinueDialogue();
@@ -461,7 +478,7 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Flower Launch");
             Event_OnFlowerLaunch?.Invoke();
-            animator.SetTrigger(AnimationStrings.flowerLaunch);   
+            animator.SetTrigger(AnimationStrings.flowerLaunch);
             StartCoroutine(FlowerLaunch());
         }
     }
@@ -490,6 +507,13 @@ public class PlayerController : MonoBehaviour
     {
         if (context.started && canDash && !IsLaunching && !IsLaunching && !DialogueManager.GetInstance().dialogueIsPlaying)
         {
+            if (IsRopeSwinging)
+            {
+                if (rb.position.y >= LassoAnchor.y - AnchorHeightBuffer && rb.position.y <= LassoAnchor.y + AnchorHeightBuffer)
+                {
+                    return;
+                }
+            }
             Debug.Log("Dash");
             IsDashing = true;
             StartCoroutine(Dash());
@@ -508,6 +532,11 @@ public class PlayerController : MonoBehaviour
 
         // Determine dash direction
         Vector2 dashDirection = IsFacingRight ? Vector2.right : Vector2.left;
+        if (reverseDash)
+        {
+            Debug.Log("Reverse Dash");
+            dashDirection *= -1;
+        }
         rb.velocity = dashDirection * dashingPower;
 
         // Optionally, add a dash effect or sound here
@@ -518,8 +547,10 @@ public class PlayerController : MonoBehaviour
         rb.gravityScale = originalGravity;
         IsDashing = false;
         //Debug.Log("finished dash");
-
-        yield return new WaitForSeconds(dashingCD);
+        if (!IsRopeSwinging)
+        {
+            yield return new WaitForSeconds(dashingCD);
+        }
         canDash = true;
     }
 

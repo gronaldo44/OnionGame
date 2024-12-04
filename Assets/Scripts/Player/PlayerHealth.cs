@@ -6,7 +6,7 @@ public class PlayerHealth : MonoBehaviour
 {
     public float maxHealth = 50f;
     private Animator animator;
-    private bool canTakeDamage = true;
+    public bool CanTakeDamage = true;
     [SerializeField] private float _currHealth;
     public float CurrentHealth
     {
@@ -29,7 +29,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        if (!canTakeDamage) { return; }
+        if (!CanTakeDamage) { return; }
 
         animator.SetTrigger(damageTaken);
         if (isDead) return; // No damage if the player is already dead
@@ -44,14 +44,14 @@ public class PlayerHealth : MonoBehaviour
         {
             Die();
         }
-        StartCoroutine(Invulnerable(2f));
+        StartCoroutine(Invulnerable(1f));
     }
 
     private IEnumerator Invulnerable(float duration)
     {
-        canTakeDamage = false;
+        CanTakeDamage = false;
         yield return new WaitForSeconds(duration);
-        canTakeDamage = true;
+        CanTakeDamage = true;
     }
 
     public void Heal(float healAmount)

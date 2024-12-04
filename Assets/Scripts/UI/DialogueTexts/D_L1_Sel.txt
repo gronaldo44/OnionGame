@@ -8,4 +8,4 @@ With the Onions missing, fungus has been spreading.
 
 But now that you're here, we can destroy the fungus roots.
 
-There is a fungus root at the top of this cave. JUMP on that platform, and I'll guide you to it.
+There is a fungus root at the top of this cave.\nJUMP on that platform, and I'll guide you to it.
