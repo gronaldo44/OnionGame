@@ -13,7 +13,6 @@ public class SandboxButtonController : MonoBehaviour
     void Start()
     {
         sandbox = GetComponent<Button>();
-        sandbox.Select();
         if (sandbox != null)
         {
             sandbox.onClick.AddListener(OnSandboxClicked);

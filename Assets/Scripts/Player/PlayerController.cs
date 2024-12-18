@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,10 +13,6 @@ public class PlayerController : MonoBehaviour
     TouchingDirections touchingDirections;  // What the player's body is touching
     Animator animator;
     [SerializeField] public Vector3 spawnLocation = Vector3.zero;
-
-    public TextAsset DialogueTextFile = null;
-    public bool InDialogueTriggerRange = false;
-    private bool inDialogue = false;
 
     public float jumpImpulse = 16f; // Increased for more snappy ascent
     public float jumpCutMultiplier = 0.5f;
@@ -256,7 +250,6 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
-
         // Determine target speed based on input
         float targetSpeed = moveInput.x * moveSpeed;
 
@@ -333,41 +326,12 @@ public class PlayerController : MonoBehaviour
         if (context.started && !IsLaunching && !IsDashing && !DialogueManager.GetInstance().dialogueIsPlaying)
         {
             Debug.Log("Attempting to lasso");
-            if (hairLassoController.TryAttachLasso())
-            { // Notify HairLassoController to attach the lasso
-                animator.SetBool(AnimationStrings.isRopeSwinging, true);
-            }
+            hairLassoController.TryAttachLasso(); // Notify HairLassoController to attach the lasso
         }
         if (context.canceled && IsRopeSwinging)
         {
             Debug.Log("Releasing lasso");
             hairLassoController.ReleaseLasso(); // Notify HairLassoController to release the lasso
-            animator.SetBool(AnimationStrings.isRopeSwinging, false);
-        }
-    }
-
-    /// <summary>
-    /// called when a player issues an interact command
-    /// </summary>
-    /// <param name="context"></param>
-    public void OnInteract(InputAction.CallbackContext context)
-    {
-        if (context.started)
-        {   
-            if (InDialogueTriggerRange && !inDialogue)  // Starting dialogue
-            {
-                Debug.Log("Initiating Dialogue");
-                DialogueManager.GetInstance().EnterDialogueMode(DialogueTextFile);
-                inDialogue = true; 
-            } else if (InDialogueTriggerRange && inDialogue)
-            {
-                Debug.Log("Continue dialogue");
-                DialogueManager.GetInstance().ContinueDialogue();
-                if (!DialogueManager.GetInstance().dialogueIsPlaying)
-                {
-                    inDialogue = false;
-                }
-            }
         }
     }
 
@@ -377,7 +341,7 @@ public class PlayerController : MonoBehaviour
     /// <param name="context">Move Command</param>
     public void OnMove(InputAction.CallbackContext context)
     {
-        if (inDialogue) { return; } //Don't allow move while dialogue is playing
+        if (DialogueManager.GetInstance().dialogueIsPlaying) { return; } //Don't allow move while dialogue is playing
 
         // Directly set moveInput without smoothing
         moveInput = context.ReadValue<Vector2>();

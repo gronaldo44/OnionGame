@@ -20,28 +20,46 @@ public class DialogueTrigger : MonoBehaviour
 
     private void Update()
     {
-
+        if (inTriggerRange && !DialogueManager.GetInstance().dialogueIsPlaying)
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                Debug.Log("Initiating Dialogue");
+                interactIcon.SetActive(false);
+                DialogueManager.GetInstance().EnterDialogueMode(textFile);
+            }
+        }
+        else if (DialogueManager.GetInstance().dialogueIsPlaying && inTriggerRange)
+        {
+            // Only allow continuation of dialogue if it's already playing
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                DialogueManager.GetInstance().ContinueDialogue();
+            }
+        } else if (DialogueManager.GetInstance().dialogueIsPlaying && !inTriggerRange) //Leaving trigger range during dialogue
+        {
+            DialogueManager.GetInstance().ExitDialogueMode();
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.TryGetComponent<PlayerController>(out var player)) //Check if player is in range
+        if (collider.gameObject.tag == "Player") //Check if player is in range
         {
             interactIcon.SetActive(true);
-            player.InDialogueTriggerRange = true;
-            player.DialogueTextFile = textFile;
-            Debug.Log("In dialogue trigger range");
+            inTriggerRange = true;
         }
     }
 
     private void OnTriggerExit2D(Collider2D collider)
     {
-        if (collider.TryGetComponent<PlayerController>(out var player))
-        {
-            interactIcon.SetActive(false);
-            player.InDialogueTriggerRange = false;
-            player.DialogueTextFile = null;
-            Debug.Log("Out of dialogue trigger range");
-        }
+        interactIcon.SetActive(false);
+        inTriggerRange = false;
+        Debug.Log("Out of trigger range");
+    }
+
+    public bool GetInTriggerRange()
+    {
+        return inTriggerRange;
     }
 }

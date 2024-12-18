@@ -1,13 +1,13 @@
 Selene
 
-Hello Diana!
+Hi I am Selene!
 
-My name is Selene.
+I am Diana's best friend.
 
-I am a friend and want to guide you.
+Good job reaching me up here.
 
-You will need to hold Jump to reach that platform.
+This is the end of our prototype
 
-You can press Jump on Sunflowers to launch midair.
+Thank you for playing :D
 
-We will meet again!
+Good thing there's no fall damage.

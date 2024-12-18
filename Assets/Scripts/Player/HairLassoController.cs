@@ -15,7 +15,9 @@ public class HairLassoController : MonoBehaviour
     private void Awake()
     {
         distanceJoint.enabled = false; // Start disabled
+        lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.enabled = false;
+
         Debug.Log("Distance joint is: " + distanceJoint.name);
         Debug.Log("Line Renderer is: " + lineRenderer.name);
     }
@@ -25,7 +27,6 @@ public class HairLassoController : MonoBehaviour
         if (isLassoActive)
         {
             UpdateLassoPosition();
-            UpdatePlayerRotation();
         }
     }
 
@@ -37,24 +38,6 @@ public class HairLassoController : MonoBehaviour
             Vector3 swingablePosition = currentSwingable.transform.position;
             lineRenderer.SetPosition(0, playerPosition);
             lineRenderer.SetPosition(1, swingablePosition);
-        }
-    }
-
-    private void UpdatePlayerRotation()
-    {
-        if (currentSwingable != null)
-        {
-            Vector2 direction = (currentSwingable.transform.position - playerRb.transform.position).normalized;
-
-            float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90;
-
-            float angleDifference = Quaternion.Angle(playerRb.transform.rotation, Quaternion.Euler(0, 0, targetAngle));
-            if (angleDifference > 45f) // angle threshold for rotating
-            {
-                Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
-                float rotationSpeed = 5f;
-                playerRb.transform.rotation = Quaternion.Lerp(playerRb.transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
-            }
         }
     }
 
@@ -72,7 +55,6 @@ public class HairLassoController : MonoBehaviour
         isLassoActive = false;
         distanceJoint.enabled = false;
         lineRenderer.enabled = false;
-        playerRb.transform.rotation = Quaternion.identity;
     }
 
     public bool TryAttachLasso()

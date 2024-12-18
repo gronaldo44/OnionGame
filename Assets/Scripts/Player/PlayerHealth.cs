@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public float maxHealth = 3f;
+    public float maxHealth = 50f;
     private Animator animator;
     [SerializeField] private float _currHealth;
     public float CurrentHealth
@@ -66,11 +66,11 @@ public class PlayerHealth : MonoBehaviour
         // For testing
         if (Input.GetKeyDown(KeyCode.K)) // Press K to simulate damage
         {
-            TakeDamage(1f); // Deal 10 damage for testing
+            TakeDamage(10f); // Deal 10 damage for testing
         }
         if (Input.GetKeyDown(KeyCode.L)) // Press L to simulate healing
         {
-            Heal(1f); // Heal 10 damage for testing
+            Heal(10f); // Heal 10 damage for testing
         }
     }
 }
