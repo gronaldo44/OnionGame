@@ -1,6 +1,6 @@
 # The Final Core
-[Gameplay Video](https://youtu.be/vrCWAv1gTOs)
-[Game Build Free Download](https://drive.google.com/file/d/1Irgz2SGTXpeqmYofv8HoJJxqxnS1_LLq/view?usp=sharing)
+* [Gameplay Video](https://youtu.be/vrCWAv1gTOs)
+* [Game Build Free Download](https://drive.google.com/file/d/1Irgz2SGTXpeqmYofv8HoJJxqxnS1_LLq/view?usp=sharing)
 
 **The Final Core** is a 2D Platformer. Movement challenges revolve around air control and is enhanced with swinging and flower launching. You play as an Onion who must save her kingdom from fungi.
 
